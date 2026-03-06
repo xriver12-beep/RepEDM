@@ -1,0 +1,707 @@
+/* 分析頁面樣式 */
+
+/* 統計概覽 */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+    font-size: 2.5rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    border-radius: 12px;
+    color: white;
+}
+
+.stat-content {
+    flex: 1;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 0.25rem;
+}
+
+.stat-label {
+    font-size: 0.875rem;
+    color: #718096;
+    margin-bottom: 0.5rem;
+}
+
+.stat-change {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    display: inline-block;
+}
+
+.stat-change.positive {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.stat-change.negative {
+    background: #fed7d7;
+    color: #742a2a;
+}
+
+/* 圖表區域 */
+.charts-section {
+    margin-bottom: 2rem;
+}
+
+.chart-row {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+@media (max-width: 1024px) {
+    .chart-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.chart-container {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    min-height: 350px;
+    display: flex;
+    flex-direction: column;
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.chart-header h3 {
+    font-size: 1.125rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin: 0;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.chart-content {
+    flex: 1;
+    position: relative;
+    width: 100%;
+}
+
+.chart-controls {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.chart-btn {
+    padding: 0.25rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    color: #718096;
+    cursor: pointer;
+    font-size: 0.875rem;
+    transition: all 0.2s;
+}
+
+.chart-btn:hover {
+    background: #f7fafc;
+}
+
+.chart-btn.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+/* Geo Chart Styles */
+.geo-chart {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0 1.5rem;
+}
+
+@media (max-width: 1400px) {
+    .geo-chart {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 1024px) {
+    .geo-chart {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 768px) {
+    .geo-chart {
+        grid-template-columns: 1fr;
+    }
+}
+
+.geo-item {
+    margin-bottom: 0.75rem;
+    border-bottom: 1px solid #f7fafc;
+    padding-bottom: 0.5rem;
+}
+
+.geo-item:nth-last-child(-n+4) {
+    margin-bottom: 0;
+    border-bottom: none;
+}
+
+.geo-item .d-flex {
+    display: flex;
+    align-items: center;
+}
+
+.geo-country {
+    font-weight: 500;
+    font-size: 0.875rem;
+    color: #4a5568;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 250px;
+    display: inline-block;
+}
+
+.ms-2 {
+    margin-left: 0.5rem;
+}
+
+.geo-percentage {
+    font-size: 0.75rem;
+    color: #718096;
+}
+
+.geo-bar {
+    height: 8px;
+    background: #edf2f7;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.geo-fill {
+    height: 100%;
+    background: #4299e1;
+    border-radius: 4px;
+    transition: width 1s ease;
+}
+
+/* Campaign Performance Section */
+.campaign-performance {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.section-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2d3748;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.performance-table-container {
+    overflow-x: auto;
+    margin-bottom: 1rem;
+}
+
+.performance-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.performance-table th,
+.performance-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.performance-table th {
+    background: #f7fafc;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.875rem;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+}
+
+.performance-table th:hover {
+    background: #edf2f7;
+}
+
+.performance-table tr:hover {
+    background: #f7fafc;
+}
+
+.performance-table td {
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+.status-badge {
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+}
+
+.status-sent {
+    background: #c6f6d5;
+    color: #22543d;
+}
+
+.status-draft {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.status-scheduled {
+    background: #bee3f8;
+    color: #2c5282;
+}
+
+/* Pagination */
+.pagination-controls {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.btn-outline {
+    border: 1px solid #e2e8f0;
+    background: white;
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.875rem;
+}
+
+.btn-outline:hover:not(:disabled) {
+    background: #f7fafc;
+    border-color: #cbd5e0;
+}
+
+.btn-outline:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+#performancePageInfo {
+    font-size: 0.875rem;
+    color: #718096;
+}
+
+/* Actions */
+.btn-icon {
+    background: none;
+    border: none;
+    color: #718096;
+    cursor: pointer;
+    padding: 0.25rem;
+    transition: color 0.2s;
+}
+
+.btn-icon:hover {
+    color: #4299e1;
+}
+
+/* Report Table Styles (New) */
+.report-content {
+    padding: 1.5rem;
+}
+
+.report-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+}
+
+.report-table th,
+.report-table td {
+    padding: 1rem 1.5rem;
+    text-align: left;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-table th {
+    background: #f8fafc;
+    font-weight: 600;
+    color: #4a5568;
+    font-size: 0.875rem;
+    white-space: nowrap;
+    border-top: 1px solid #e2e8f0;
+    letter-spacing: 0.025em;
+    text-transform: uppercase;
+}
+
+.report-table th:first-child {
+    border-top-left-radius: 8px;
+    border-left: 1px solid #e2e8f0;
+}
+
+.report-table th:last-child {
+    border-top-right-radius: 8px;
+    border-right: 1px solid #e2e8f0;
+}
+
+.report-table td:first-child {
+    border-left: 1px solid #e2e8f0;
+}
+
+.report-table td:last-child {
+    border-right: 1px solid #e2e8f0;
+}
+
+.report-table tr:last-child td:first-child {
+    border-bottom-left-radius: 8px;
+}
+
+.report-table tr:last-child td:last-child {
+    border-bottom-right-radius: 8px;
+}
+
+.report-table tr {
+    transition: background-color 0.2s ease;
+}
+
+.report-table tr:hover td {
+    background-color: #f7fafc;
+}
+
+.report-table td {
+    color: #2d3748;
+    font-size: 0.95rem;
+    vertical-align: middle;
+}
+
+.report-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.report-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2d3748;
+    font-weight: 600;
+}
+
+/* Date column specific */
+.col-date {
+    color: #718096;
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.85rem;
+    white-space: nowrap;
+}
+
+/* Email column specific */
+.col-email {
+    font-weight: 500;
+    color: #2b6cb0;
+}
+
+.font-monospace {
+    font-family: 'Monaco', 'Consolas', monospace;
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* Empty state styling */
+.empty-state {
+    padding: 4rem 2rem;
+    text-align: center;
+    color: #a0aec0;
+    font-style: italic;
+    background: #fcfcfc;
+}
+
+/* Chart Summary Panel */
+.chart-content-wrapper {
+    display: flex;
+    height: 100%;
+    width: 100%;
+}
+
+.chart-canvas-wrapper {
+    flex-grow: 1;
+    min-width: 0;
+    position: relative;
+    height: 300px; /* Ensure height for canvas */
+}
+
+.chart-summary-panel {
+    width: 200px;
+    min-width: 200px;
+    margin-left: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 15px;
+    border-left: 1px solid #e2e8f0;
+    padding-left: 20px;
+}
+
+.summary-item {
+    text-align: left;
+    padding: 10px;
+    background: #f7fafc;
+    border-radius: 8px;
+    transition: all 0.2s;
+}
+
+.summary-item:hover {
+    background: #edf2f7;
+    transform: translateX(5px);
+}
+
+.summary-label {
+    font-size: 12px;
+    color: #718096;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.summary-value {
+    font-size: 20px;
+    font-weight: bold;
+    color: #2d3748;
+}
+
+.summary-sub {
+    font-size: 11px;
+    color: #a0aec0;
+    margin-top: 2px;
+}
+
+.summary-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+}
+
+
+/* Fix Canvas Sizing */
+canvas {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+}
+
+/* Ensure chart content fills the container */
+.chart-content {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 300px;
+}
+
+
+/* Date Range Picker Modal */
+.date-picker-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    justify-content: center;
+    align-items: center;
+}
+
+.date-picker-modal.active {
+    display: flex;
+}
+
+.date-picker-content {
+    background: white;
+    padding: 2rem;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+    width: 90%;
+    max-width: 400px;
+}
+
+.date-picker-header {
+    margin-bottom: 1.5rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.date-picker-header h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    color: #2d3748;
+}
+
+.date-picker-body {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.date-input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.date-input-group label {
+    font-size: 0.875rem;
+    color: #4a5568;
+    font-weight: 500;
+}
+
+.date-input-group input {
+    padding: 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    font-size: 1rem;
+    color: #2d3748;
+}
+
+.date-picker-footer {
+    margin-top: 1.5rem;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.btn-cancel {
+    padding: 0.5rem 1rem;
+    background: #e2e8f0;
+    color: #4a5568;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-cancel:hover {
+    background: #cbd5e0;
+}
+
+.btn-apply {
+    padding: 0.5rem 1rem;
+    background: #667eea;
+    color: white;
+    border-radius: 6px;
+    border: none;
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.btn-apply:hover {
+    background: #5a67d8;
+}
+
+
+/* Date Range Picker Styling */
+.date-range-picker {
+    position: relative;
+    display: inline-block;
+}
+
+.date-range-picker select {
+    appearance: none;
+    -webkit-appearance: none;
+    background-color: #fff;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    padding: 0.5rem 2rem 0.5rem 1rem;
+    font-size: 0.875rem;
+    color: #4a5568;
+    cursor: pointer;
+    font-weight: 500;
+    line-height: 1.5;
+    outline: none;
+    transition: all 0.2s;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+}
+
+.date-range-picker select:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.date-range-picker select:focus {
+    border-color: #667eea;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+}
+
+.date-range-picker::after {
+    content: '\f078'; /* FontAwesome chevron-down */
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #a0aec0;
+    pointer-events: none;
+    font-size: 0.75rem;
+}
+

@@ -1,0 +1,62 @@
+/* Tab Navigation */
+.tabs-container {
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.nav-tabs {
+    display: flex;
+    list-style: none;
+    padding: 0;
+    margin: 0 0 20px 0;
+    border-bottom: 1px solid #eee;
+}
+
+.nav-item {
+    padding: 12px 24px;
+    cursor: pointer;
+    font-weight: 500;
+    color: #666;
+    border-bottom: 2px solid transparent;
+    transition: all 0.3s ease;
+}
+
+.nav-item:hover {
+    color: #4a90e2;
+}
+
+.nav-item.active {
+    color: #4a90e2;
+    border-bottom-color: #4a90e2;
+}
+
+/* Tab Content */
+.tab-content {
+    display: none;
+    animation: fadeIn 0.3s ease;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(5px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* Adjust existing sections to fit in tabs */
+.charts-section, .report-section {
+    padding: 0;
+    margin: 0 !important;
+    background: none;
+    box-shadow: none;
+}
+
+.chart-container, .report-container {
+    box-shadow: none;
+    border: 1px solid #eee;
+}

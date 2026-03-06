@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試設定頁面</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+        }
+        .test-info {
+            background: #e8f4fd;
+            padding: 15px;
+            border-radius: 5px;
+            margin: 20px 0;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 設定頁面測試</h1>
+        
+        <div class="test-info success">
+            <h3>✅ 測試成功！</h3>
+            <p>如果您能看到這個頁面，說明沒有自動重定向問題。</p>
+            <p>當前時間: <span id="currentTime"></span></p>
+        </div>
+        
+        <div class="test-info">
+            <h3>📋 測試項目</h3>
+            <ul>
+                <li>✅ 頁面載入正常</li>
+                <li>✅ 沒有自動重定向</li>
+                <li>✅ JavaScript 執行正常</li>
+            </ul>
+        </div>
+        
+        <div style="text-align: center; margin-top: 30px;">
+            <a href="settings.html" style="background: #007bff; color: white; padding: 10px 20px; text-decoration: none; border-radius: 5px;">
+                前往實際設定頁面
+            </a>
+        </div>
+    </div>
+
+    <script>
+        // 顯示當前時間
+        document.getElementById('currentTime').textContent = new Date().toLocaleString();
+        
+        // 檢查是否有重定向
+        console.log('測試頁面載入成功，沒有重定向');
+        
+        // 監聽頁面卸載
+        window.addEventListener('beforeunload', function() {
+            console.log('頁面即將卸載');
+        });
+    </script>
+</body>
+</html>

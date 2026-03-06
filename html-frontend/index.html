@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WintonEDM</title>
+    <script>
+        // 檢查登入狀態並重定向
+        const userToken = localStorage.getItem('authToken');
+        const adminToken = localStorage.getItem('adminAuthToken');
+        
+        if (userToken) {
+            window.location.href = 'user-dashboard.html';
+        } else if (adminToken) {
+            window.location.href = 'dashboard.html';
+        } else {
+            // 預設前往前台登入頁
+            window.location.href = 'user-login.html';
+        }
+    </script>
+</head>
+<body>
+    <p>正在重定向...</p>
+</body>
+</html>

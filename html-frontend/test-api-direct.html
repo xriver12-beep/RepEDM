@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>直接 API 測試</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .result { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+        .success { background-color: #d4edda; }
+        .error { background-color: #f8d7da; }
+        button { padding: 10px 20px; margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>直接 API 測試</h1>
+    
+    <button onclick="testDirectFetch()">測試直接 fetch</button>
+    <button onclick="testApiClient()">測試 ApiClient</button>
+    <button onclick="testCampaignService()">測試 CampaignService</button>
+    <button onclick="clearResults()">清除結果</button>
+    
+    <div id="results"></div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/state-manager.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dev-config.js"></script>
+
+    <script>
+        function addResult(title, content, isSuccess = true) {
+            const results = document.getElementById('results');
+            const div = document.createElement('div');
+            div.className = `result ${isSuccess ? 'success' : 'error'}`;
+            div.innerHTML = `<h3>${title}</h3><pre>${JSON.stringify(content, null, 2)}</pre>`;
+            results.appendChild(div);
+        }
+
+        async function testDirectFetch() {
+            try {
+                console.log('開始直接 fetch 測試...');
+                const cacheBuster = Date.now();
+                const response = await fetch(`http://localhost:3001/api/campaigns?_t=${cacheBuster}`);
+                console.log('Fetch 響應狀態:', response.status);
+                console.log('Fetch 響應 OK:', response.ok);
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    console.log('Fetch 響應數據:', data);
+                    addResult('直接 Fetch 成功', {
+                        status: response.status,
+                        data: data
+                    });
+                } else {
+                    addResult('直接 Fetch 失敗', {
+                        status: response.status,
+                        statusText: response.statusText
+                    }, false);
+                }
+            } catch (error) {
+                console.error('直接 fetch 錯誤:', error);
+                addResult('直接 Fetch 錯誤', error.message, false);
+            }
+        }
+
+        async function testApiClient() {
+            try {
+                console.log('開始 ApiClient 測試...');
+                const cacheBuster = Date.now();
+                const response = await apiClient.get('/campaigns', { _t: cacheBuster });
+                console.log('ApiClient 響應:', response);
+                addResult('ApiClient 成功', response);
+            } catch (error) {
+                console.error('ApiClient 錯誤:', error);
+                addResult('ApiClient 錯誤', error.message, false);
+            }
+        }
+
+        async function testCampaignService() {
+            try {
+                console.log('開始 CampaignService 測試...');
+                const cacheBuster = Date.now();
+                const response = await campaignService.getCampaigns({ _t: cacheBuster });
+                console.log('CampaignService 響應:', response);
+                addResult('CampaignService 成功', response);
+            } catch (error) {
+                console.error('CampaignService 錯誤:', error);
+                addResult('CampaignService 錯誤', error.message, false);
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('results').innerHTML = '';
+        }
+
+        // 頁面載入時自動測試
+        window.addEventListener('load', () => {
+            console.log('頁面載入完成，開始自動測試...');
+            setTimeout(() => {
+                testDirectFetch();
+                setTimeout(() => testApiClient(), 1000);
+                setTimeout(() => testCampaignService(), 2000);
+            }, 500);
+        });
+    </script>
+</body>
+</html>

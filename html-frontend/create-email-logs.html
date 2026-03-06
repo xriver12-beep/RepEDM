@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>創建郵件日誌表</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 50px auto;
+            padding: 20px;
+        }
+        .container {
+            background: #f5f5f5;
+            padding: 30px;
+            border-radius: 8px;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>創建郵件日誌表</h1>
+        <p>點擊下方按鈕創建郵件發送日誌表和相關索引、視圖。</p>
+        
+        <button onclick="createEmailLogsTable()">創建郵件日誌表</button>
+        
+        <div id="result"></div>
+    </div>
+
+    <script src="js/api.js?v=3"></script>
+    <script src="js/admin-auth.js?v=3"></script>
+    <script>
+        async function createEmailLogsTable() {
+            const resultDiv = document.getElementById('result');
+            resultDiv.innerHTML = '正在創建郵件日誌表...';
+            resultDiv.className = 'result';
+            
+            try {
+                // 確保已登入
+                await adminAuth.checkAuth();
+                
+                const response = await fetch('/api/settings/create-email-logs-table', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${adminAuth.getToken()}`
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    resultDiv.innerHTML = `✅ 成功！\n${data.message}`;
+                    resultDiv.className = 'result success';
+                } else {
+                    resultDiv.innerHTML = `❌ 失敗！\n${data.message}`;
+                    resultDiv.className = 'result error';
+                }
+                
+            } catch (error) {
+                console.error('創建郵件日誌表錯誤:', error);
+                resultDiv.innerHTML = `❌ 錯誤！\n${error.message}`;
+                resultDiv.className = 'result error';
+            }
+        }
+        
+        // 頁面載入時檢查認證狀態
+        window.addEventListener('load', async () => {
+            try {
+                await adminAuth.checkAuth();
+                console.log('管理員已認證');
+            } catch (error) {
+                console.error('認證失敗:', error);
+                alert('請先登入管理員帳號');
+                window.location.href = '/login.html';
+            }
+        });
+    </script>
+</body>
+</html>

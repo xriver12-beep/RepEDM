@@ -1,0 +1,36 @@
+{
+  "name": "winton-edm",
+  "version": "1.0.0",
+  "description": "電子報管理系統 - 功能完整的電子郵件行銷平台",
+  "main": "index.js",
+  "scripts": {
+    "dev": "concurrently \"npm run backend:dev\" \"npm run html-frontend:dev\"",
+    "backend:dev": "cd backend && npm run dev",
+    "html-frontend:dev": "cd html-frontend && npm start",
+    "backend:install": "cd backend && npm install",
+    "html-frontend:install": "cd html-frontend && npm install",
+    "install:all": "npm run backend:install && npm run html-frontend:install",
+    "start": "cd backend && npm start",
+    "backend:test": "cd backend && npm test"
+  },
+  "keywords": [
+    "newsletter",
+    "email-marketing",
+    "edm",
+    "html",
+    "nodejs",
+    "mssql"
+  ],
+  "author": "WintonEDM Team",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  },
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "puppeteer": "^24.26.1"
+  }
+}

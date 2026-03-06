@@ -1,0 +1,350 @@
+/* Category Management Styles */
+
+/* Layout & Containers */
+.category-management-content {
+    background: white;
+    border-radius: 0.5rem;
+    border: 1px solid #e5e7eb;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    min-height: 500px;
+}
+
+.category-management-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    background: #f9fafb;
+}
+
+.category-management-header h3 {
+    margin: 0;
+    color: #111827;
+    font-size: 1.25rem;
+    font-weight: 600;
+}
+
+/* Toolbar */
+.category-toolbar {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 1.5rem;
+    border-bottom: 1px solid #e5e7eb;
+    gap: 1rem;
+    background: #fff;
+}
+
+.search-box {
+    position: relative;
+    flex: 1;
+    max-width: 300px;
+}
+
+.search-box i {
+    position: absolute;
+    left: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #9ca3af;
+}
+
+.search-box input {
+    padding-left: 2.5rem;
+    width: 100%;
+}
+
+.actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+/* Tree View Container */
+.category-tree-container {
+    flex: 1;
+    overflow-y: auto;
+    padding: 1rem;
+    background: #fff;
+}
+
+/* Tree Node Styles */
+.tree-node {
+    position: relative;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.tree-node-content {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    margin-bottom: 2px;
+    cursor: default;
+    transition: background-color 0.2s;
+}
+
+.tree-node-content:hover {
+    background-color: #f3f4f6;
+}
+
+.tree-node-content.selected {
+    background-color: #e5e7eb;
+    border-color: #d1d5db;
+}
+
+/* Drag & Drop States */
+.tree-node-content.drag-over {
+    background-color: #e0e7ff; /* Light indigo */
+    border: 1px dashed #4f46e5;
+}
+
+.tree-node-content.drag-over-top {
+    border-top: 2px solid #4f46e5;
+}
+
+.tree-node-content.drag-over-bottom {
+    border-bottom: 2px solid #4f46e5;
+}
+
+/* Node Elements */
+.node-toggle {
+    width: 24px;
+    height: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #6b7280;
+    margin-right: 4px;
+    transition: transform 0.2s;
+}
+
+.node-toggle:hover {
+    color: #374151;
+}
+
+.node-toggle.expanded i {
+    transform: rotate(90deg);
+}
+
+.node-toggle.invisible {
+    visibility: hidden;
+}
+
+.node-drag-handle {
+    cursor: grab;
+    color: #9ca3af;
+    margin-right: 8px;
+    padding: 2px;
+}
+
+.node-drag-handle:hover {
+    color: #4b5563;
+}
+
+.node-drag-handle:active {
+    cursor: grabbing;
+}
+
+.node-icon {
+    width: 24px;
+    height: 24px;
+    margin-right: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.node-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+}
+
+.node-icon i {
+    color: #6b7280;
+    font-size: 1.1em;
+}
+
+.node-label {
+    flex: 1;
+    font-weight: 500;
+    color: #111827;
+    margin-right: 1rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.node-meta {
+    font-size: 0.75rem;
+    color: #6b7280;
+    margin-right: 1rem;
+    display: flex;
+    gap: 0.5rem;
+}
+
+.node-actions {
+    display: flex;
+    gap: 0.25rem;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.tree-node-content:hover .node-actions {
+    opacity: 1;
+}
+
+.btn-icon-only {
+    padding: 0.25rem;
+    width: 28px;
+    height: 28px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid transparent;
+    background: transparent;
+    color: #6b7280;
+    cursor: pointer;
+}
+
+.btn-icon-only:hover {
+    background-color: #fff;
+    border-color: #d1d5db;
+    color: #374151;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+}
+
+.btn-icon-only.text-danger:hover {
+    color: #dc2626;
+    border-color: #fecaca;
+    background-color: #fef2f2;
+}
+
+/* Children Container */
+.tree-children {
+    padding-left: 28px; /* Indentation */
+    border-left: 1px solid #e5e7eb;
+    margin-left: 12px;
+}
+
+.tree-children.hidden {
+    display: none;
+}
+
+/* Loading & Empty States */
+.loading-state, .empty-state {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem;
+    color: #6b7280;
+    text-align: center;
+}
+
+.loading-spinner {
+    border: 3px solid #f3f3f3;
+    border-radius: 50%;
+    border-top: 3px solid #3b82f6;
+    width: 24px;
+    height: 24px;
+    animation: spin 1s linear infinite;
+    margin-bottom: 1rem;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+/* Image Upload Preview in Modal */
+.image-preview-container {
+    margin-top: 0.5rem;
+    width: 100px;
+    height: 100px;
+    border: 1px dashed #d1d5db;
+    border-radius: 4px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    position: relative;
+    background: #f9fafb;
+}
+
+.image-preview-container img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+}
+
+.image-preview-placeholder {
+    color: #9ca3af;
+    font-size: 2rem;
+}
+
+.remove-image-btn {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    background: rgba(255, 255, 255, 0.9);
+    border: none;
+    border-radius: 50%;
+    width: 20px;
+    height: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: #ef4444;
+    font-size: 0.75rem;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.1);
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .category-management-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .category-toolbar {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .search-box {
+        max-width: 100%;
+        width: 100%;
+    }
+
+    .actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .actions .btn {
+        flex: 1;
+        justify-content: center;
+    }
+
+    .tree-node-content {
+        padding: 0.75rem 0.5rem;
+    }
+
+    .node-actions {
+        opacity: 1; /* Always visible on touch */
+    }
+
+    .node-meta {
+        display: none; /* Hide meta info on small screens */
+    }
+}

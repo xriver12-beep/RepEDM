@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>API 測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>API 服務測試</h1>
+        
+        <div>
+            <button onclick="testApiService()">測試 apiService</button>
+            <button onclick="testCampaignService()">測試 campaignService</button>
+            <button onclick="testGetCampaigns()">測試獲取活動列表</button>
+            <button onclick="clearResults()">清除結果</button>
+        </div>
+        
+        <div id="result" class="result"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/state-manager.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-auth-guard.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        function log(message, type = 'info') {
+            const result = document.getElementById('result');
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}\n`;
+            result.textContent += logMessage;
+            
+            if (type === 'error') {
+                result.className = 'result error';
+            } else if (type === 'success') {
+                result.className = 'result success';
+            } else {
+                result.className = 'result';
+            }
+        }
+
+        function testApiService() {
+            try {
+                log('測試 apiService...');
+                if (typeof apiService !== 'undefined') {
+                    log('✅ apiService 已定義', 'success');
+                    log('apiService 類型: ' + typeof apiService);
+                    log('apiService 方法: ' + Object.getOwnPropertyNames(apiService).join(', '));
+                } else {
+                    log('❌ apiService 未定義', 'error');
+                }
+            } catch (error) {
+                log('❌ 測試 apiService 時發生錯誤: ' + error.message, 'error');
+            }
+        }
+
+        function testCampaignService() {
+            try {
+                log('測試 campaignService...');
+                if (typeof campaignService !== 'undefined') {
+                    log('✅ campaignService 已定義', 'success');
+                    log('campaignService 類型: ' + typeof campaignService);
+                    log('campaignService 方法: ' + Object.getOwnPropertyNames(campaignService).join(', '));
+                } else {
+                    log('❌ campaignService 未定義', 'error');
+                }
+            } catch (error) {
+                log('❌ 測試 campaignService 時發生錯誤: ' + error.message, 'error');
+            }
+        }
+
+        async function testGetCampaigns() {
+            try {
+                log('測試獲取活動列表...');
+                if (typeof apiService !== 'undefined' && apiService.getCampaigns) {
+                    const campaigns = await apiService.getCampaigns();
+                    log('✅ 成功獲取活動列表', 'success');
+                    log('活動數量: ' + campaigns.length);
+                } else {
+                    log('❌ apiService.getCampaigns 方法不可用', 'error');
+                }
+            } catch (error) {
+                log('❌ 獲取活動列表時發生錯誤: ' + error.message, 'error');
+            }
+        }
+
+        function clearResults() {
+            document.getElementById('result').textContent = '';
+            document.getElementById('result').className = 'result';
+        }
+
+        // 頁面載入時自動測試
+        window.addEventListener('load', function() {
+            log('頁面載入完成，開始自動測試...');
+            testApiService();
+            testCampaignService();
+        });
+    </script>
+</body>
+</html>

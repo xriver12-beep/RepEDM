@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入 - 電子報前台 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo 和標題 -->
+            <div class="login-header">
+                <div class="logo" style="background: transparent; box-shadow: none;">
+                    <img src="/uploads/logos/logo-1767066330043-367809270.jpg" alt="WintonEDM Logo" style="width: 100%; height: auto; object-fit: contain;">
+                </div>
+                <h1 class="login-title">WintonEDM 前台</h1>
+                <p class="login-subtitle">電子報製作與發送平台</p>
+            </div>
+
+            <!-- 登入表單 -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        用戶名/Email
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="請輸入您的用戶名"
+                        required
+                        autocomplete="off"
+                        spellcheck="false"
+                        autocapitalize="off"
+                        autocorrect="off"
+                    >
+                    <div class="input-error" id="usernameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        密碼
+                    </label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="請輸入您的密碼"
+                            required
+                            autocomplete="off"
+                            spellcheck="false"
+                            autocapitalize="off"
+                            autocorrect="off"
+                        >
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-error" id="passwordError"></div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span class="checkmark"></span>
+                        記住我
+                    </label>
+                    <a href="forgot-password.html" class="forgot-password">忘記密碼？</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="btn-text">登入</span>
+                    <div class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        登入中...
+                    </div>
+                </button>
+
+                <div class="login-error" id="loginError" style="display: none;"></div>
+            </form>
+
+            <!-- 系統資訊 -->
+            <div class="login-footer">
+                <p class="system-info">
+                    <i class="fas fa-users"></i>
+                    一般使用者登入
+                </p>
+                <div class="role-info">
+                    <small>
+                        功能：製作電子報、發送管理、數據分析
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 背景裝飾 -->
+        <div class="login-bg">
+            <div class="bg-shape shape-1" style="background: linear-gradient(45deg, #4facfe 0%, #00f2fe 100%);"></div>
+            <div class="bg-shape shape-2" style="background: linear-gradient(45deg, #43e97b 0%, #38f9d7 100%);"></div>
+            <div class="bg-shape shape-3"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="js/user-auth.js"></script>
+    <script src="js/user-login.js"></script>
+</body>
+</html>

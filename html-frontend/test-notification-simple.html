@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知功能測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        .btn {
+            padding: 10px 20px;
+            margin: 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .btn-success { background: #28a745; color: white; }
+        .btn-error { background: #dc3545; color: white; }
+        .btn-warning { background: #ffc107; color: black; }
+        .btn-info { background: #17a2b8; color: white; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>通知功能測試</h1>
+        <p>點擊下面的按鈕測試不同類型的通知：</p>
+        
+        <button class="btn btn-success" onclick="testSuccess()">成功通知</button>
+        <button class="btn btn-error" onclick="testError()">錯誤通知</button>
+        <button class="btn btn-warning" onclick="testWarning()">警告通知</button>
+        <button class="btn btn-info" onclick="testInfo()">資訊通知</button>
+        
+        <h2>測試結果</h2>
+        <div id="test-results"></div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script>
+        function testSuccess() {
+            try {
+                NotificationUtils.success('這是一個成功通知！');
+                logResult('成功通知', '✅ 正常顯示');
+            } catch (error) {
+                logResult('成功通知', '❌ 錯誤: ' + error.message);
+            }
+        }
+
+        function testError() {
+            try {
+                NotificationUtils.error('這是一個錯誤通知！');
+                logResult('錯誤通知', '✅ 正常顯示');
+            } catch (error) {
+                logResult('錯誤通知', '❌ 錯誤: ' + error.message);
+            }
+        }
+
+        function testWarning() {
+            try {
+                NotificationUtils.warning('這是一個警告通知！');
+                logResult('警告通知', '✅ 正常顯示');
+            } catch (error) {
+                logResult('警告通知', '❌ 錯誤: ' + error.message);
+            }
+        }
+
+        function testInfo() {
+            try {
+                NotificationUtils.info('這是一個資訊通知！');
+                logResult('資訊通知', '✅ 正常顯示');
+            } catch (error) {
+                logResult('資訊通知', '❌ 錯誤: ' + error.message);
+            }
+        }
+
+        function logResult(testName, result) {
+            const resultsDiv = document.getElementById('test-results');
+            const resultItem = document.createElement('div');
+            resultItem.innerHTML = `<strong>${testName}:</strong> ${result}`;
+            resultItem.style.margin = '5px 0';
+            resultsDiv.appendChild(resultItem);
+        }
+
+        // 檢查 NotificationUtils 是否可用
+        document.addEventListener('DOMContentLoaded', function() {
+            if (typeof NotificationUtils !== 'undefined') {
+                logResult('NotificationUtils 載入', '✅ 成功載入');
+            } else {
+                logResult('NotificationUtils 載入', '❌ 載入失敗');
+            }
+        });
+    </script>
+</body>
+</html>

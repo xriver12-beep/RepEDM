@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>測試 AdminAuth</title>
+</head>
+<body>
+    <h1>測試 AdminAuth 加載</h1>
+    <div id="result"></div>
+
+    <script src="js/admin-auth.js"></script>
+    <script>
+        console.log('Test script loaded');
+        console.log('window.adminAuth:', window.adminAuth);
+        
+        const resultDiv = document.getElementById('result');
+        if (window.adminAuth) {
+            resultDiv.innerHTML = '<p style="color: green;">✅ AdminAuth 加載成功</p>';
+            console.log('AdminAuth methods:', Object.getOwnPropertyNames(window.adminAuth));
+        } else {
+            resultDiv.innerHTML = '<p style="color: red;">❌ AdminAuth 加載失敗</p>';
+        }
+    </script>
+</body>
+</html>

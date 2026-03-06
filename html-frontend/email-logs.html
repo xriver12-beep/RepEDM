@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>郵件日誌 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .status-badge {
+            font-size: 0.8em;
+            padding: 0.25rem 0.5rem;
+        }
+        .status-sent {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-failed {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .log-table {
+            font-size: 0.9em;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+        .stats-card {
+            border-left: 4px solid #007bff;
+        }
+        .stats-success {
+            border-left-color: #28a745;
+        }
+        .stats-danger {
+            border-left-color: #dc3545;
+        }
+        .stats-warning {
+            border-left-color: #ffc107;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">電子報管理系統</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-text">儀表板</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="users.html" class="menu-link">
+                        <span class="menu-icon">👥</span>
+                        <span class="menu-text">使用者管理</span>
+                    </a>
+                </li>
+                <li class="menu-item active" data-role-required="Admin,Manager">
+                    <a href="email-logs.html" class="menu-link">
+                        <span class="menu-icon">📋</span>
+                        <span class="menu-text">郵件日誌</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="queue.html" class="menu-link">
+                        <span class="menu-icon">📨</span>
+                        <span class="menu-text">信件佇列</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="analytics.html" class="menu-link">
+                        <span class="menu-icon">📈</span>
+                        <span class="menu-text">成效分析</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="subscriber-stats.html" class="menu-link">
+                        <span class="menu-icon">🌏</span>
+                        <span class="menu-text">訂閱者統計</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin">
+                    <a href="settings.html" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">系統設定</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="main-content" id="mainContent">
+            <!-- 頂部導航 -->
+            <header class="top-header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="page-title">郵件日誌</h1>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-avatar">U</span>
+                            <div class="user-info">
+                                <span class="user-name">載入中...</span>
+                                <span class="user-role">-</span>
+                            </div>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-avatar-large">U</div>
+                                <div class="user-details">
+                                    <div class="user-name-large">載入中...</div>
+                                    <div class="user-email">-</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="profile.html" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span>
+                                個人資料
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn" onclick="adminAuthGuard.logout()">
+                                <span class="dropdown-icon">🚪</span>
+                                登出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container-fluid p-4">
+                <div class="row">
+                    <div class="col-12">
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <h2><i class="fas fa-list-alt me-2"></i>郵件發送日誌</h2>
+                            <button class="btn btn-outline-primary" id="refreshLogsBtn">
+                                <i class="fas fa-sync-alt me-1"></i>刷新
+                            </button>
+                        </div>
+
+                        <!-- 統計卡片 -->
+                        <div class="row mb-4" id="statsCards">
+                            <div class="col-md-3">
+                                <div class="card stats-card">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="card-title text-muted">總郵件數</h6>
+                                                <h4 class="mb-0" id="totalEmails">-</h4>
+                                            </div>
+                                            <div class="text-primary">
+                                                <i class="fas fa-envelope fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stats-card stats-success">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="card-title text-muted">成功發送</h6>
+                                                <h4 class="mb-0 text-success" id="sentEmails">-</h4>
+                                            </div>
+                                            <div class="text-success">
+                                                <i class="fas fa-check-circle fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stats-card stats-danger">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="card-title text-muted">發送失敗</h6>
+                                                <h4 class="mb-0 text-danger" id="failedEmails">-</h4>
+                                            </div>
+                                            <div class="text-danger">
+                                                <i class="fas fa-times-circle fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+                                <div class="card stats-card stats-warning">
+                                    <div class="card-body">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <h6 class="card-title text-muted">平均處理時間</h6>
+                                                <h4 class="mb-0 text-warning" id="avgProcessingTime">-</h4>
+                                            </div>
+                                            <div class="text-warning">
+                                                <i class="fas fa-clock fa-2x"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 篩選區域 -->
+                        <div class="filter-section">
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label class="form-label">狀態</label>
+                                    <select class="form-select" id="statusFilter">
+                                        <option value="">全部狀態</option>
+                                        <option value="sent">已發送</option>
+                                        <option value="failed">發送失敗</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">郵件類型</label>
+                                    <select class="form-select" id="emailTypeFilter">
+                                        <option value="">所有類型</option>
+                                        <option value="test_email">測試郵件</option>
+                                        <option value="campaign">行銷活動</option>
+                                        <option value="notification">通知郵件</option>
+                                        <option value="approval_notification">審核通知</option>
+                                        <option value="approval_rejection">審核拒絕</option>
+                                    <option value="approval_completion">審核通過</option>
+                                    <option value="smtp_test">SMTP 測試</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">開始日期</label>
+                                    <input type="date" class="form-control" id="startDateFilter">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">結束日期</label>
+                                    <input type="date" class="form-control" id="endDateFilter">
+                                </div>
+                                <div class="col-md-2">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-primary d-block w-100" id="applyFiltersBtn">
+                                        <i class="fas fa-filter me-1"></i>篩選
+                                    </button>
+                                </div>
+                            </div>
+                            <div class="row mt-3">
+                                <div class="col-md-6">
+                                    <label class="form-label">搜尋</label>
+                                    <input type="text" class="form-control" id="searchFilter" placeholder="搜尋收件人、發件人或主題...">
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">每頁顯示</label>
+                                    <select class="form-select" id="limitFilter">
+                                        <option value="10">10</option>
+                                        <option value="20" selected>20</option>
+                                        <option value="50">50</option>
+                                        <option value="100">100</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button class="btn btn-outline-secondary d-block w-100" id="clearFiltersBtn">
+                                        <i class="fas fa-times me-1"></i>清除篩選
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 日誌表格 -->
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="mb-0">郵件日誌列表</h5>
+                            </div>
+                            <div class="card-body p-0">
+                                <div class="table-responsive">
+                                    <table class="table table-hover log-table mb-0">
+                                        <thead class="table-light">
+                                            <tr>
+                                                <th>時間</th>
+                                                <th>類型</th>
+                                                <th>收件人</th>
+                                                <th>主題</th>
+                                                <th>狀態</th>
+                                                <th>處理時間</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="logsTableBody">
+                                            <tr>
+                                                <td colspan="7" class="text-center py-4">
+                                                    <div class="spinner-border text-primary" role="status">
+                                                        <span class="visually-hidden">載入中...</span>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 分頁 -->
+                        <div class="d-flex justify-content-between align-items-center mt-3">
+                            <div class="text-muted small" id="paginationInfo">
+                                <!-- 顯示筆數資訊 -->
+                            </div>
+                            <nav aria-label="郵件日誌分頁">
+                                <ul class="pagination justify-content-center mb-0" id="pagination">
+                                </ul>
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 詳情模態框 -->
+    <div class="modal fade" id="logDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">郵件日誌詳情</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="logDetailContent">
+                    <!-- 詳情內容將在這裡動態載入 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/utils.js?v=3"></script>
+    <script src="js/state-manager.js?v=3"></script>
+    <script src="js/components.js?v=3"></script>
+    <script src="js/api.js?v=3"></script>
+    <script src="js/admin-auth.js?v=3"></script>
+    <script src="js/admin-auth-guard.js?v=3"></script>
+    <script src="js/main.js?v=3"></script>
+    <script src="js/email-logs.js"></script>
+</body>
+</html>

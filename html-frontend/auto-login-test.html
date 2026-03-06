@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自動登入測試</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>自動登入測試</h1>
+    <div id="status"></div>
+    <button onclick="testLogin()">開始測試</button>
+    <button onclick="checkAuth()">檢查認證狀態</button>
+    <button onclick="clearAuth()">清除認證</button>
+
+    <script>
+        // 內聯簡化的AdminAuth服務
+        class AdminAuthService {
+            constructor() {
+                this.baseURL = 'http://localhost:3001/api/admin-auth';
+                this.tokenKey = 'adminAuthToken';
+                this.userKey = 'adminUser';
+                this.timeout = 10000;
+            }
+
+            getToken() {
+                return localStorage.getItem(this.tokenKey);
+            }
+
+            getUser() {
+                const userStr = localStorage.getItem(this.userKey);
+                return userStr ? JSON.parse(userStr) : null;
+            }
+
+            setToken(token) {
+                localStorage.setItem(this.tokenKey, token);
+            }
+
+            setUser(user) {
+                localStorage.setItem(this.userKey, JSON.stringify(user));
+            }
+
+            clearAuth() {
+                localStorage.removeItem(this.tokenKey);
+                localStorage.removeItem(this.userKey);
+            }
+
+            isAuthenticated() {
+                return !!this.getToken();
+            }
+
+            async login(username, password) {
+                try {
+                    const response = await fetch(`${this.baseURL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }),
+                        signal: AbortSignal.timeout(this.timeout)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || '登入失敗');
+                    }
+
+                    this.setToken(data.token);
+                    this.setUser(data.user);
+
+                    return data;
+                } catch (error) {
+                    console.error('登入錯誤:', error);
+                    throw error;
+                }
+            }
+        }
+
+        // 創建全域實例
+        window.adminAuth = new AdminAuthService();
+
+        function addStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            statusDiv.appendChild(div);
+        }
+
+        async function testLogin() {
+            addStatus('開始登入測試...', 'info');
+            
+            try {
+                const result = await adminAuth.login('admin', 'admin123');
+                addStatus('登入成功！', 'success');
+                addStatus(`用戶：${result.user.displayName} (${result.user.role})`, 'success');
+                addStatus(`Token: ${result.token.substring(0, 50)}...`, 'info');
+            } catch (error) {
+                addStatus(`登入失敗：${error.message}`, 'error');
+            }
+        }
+
+        function checkAuth() {
+            const isAuth = adminAuth.isAuthenticated();
+            const user = adminAuth.getUser();
+            
+            addStatus(`認證狀態：${isAuth ? '已登入' : '未登入'}`, isAuth ? 'success' : 'error');
+            
+            if (user) {
+                addStatus(`當前用戶：${user.displayName} (${user.role})`, 'info');
+            }
+        }
+
+        function clearAuth() {
+            adminAuth.clearAuth();
+            addStatus('認證資訊已清除', 'info');
+        }
+
+        // 頁面載入時檢查認證狀態
+        window.addEventListener('load', () => {
+            addStatus('頁面載入完成', 'info');
+            checkAuth();
+        });
+    </script>
+</body>
+</html>

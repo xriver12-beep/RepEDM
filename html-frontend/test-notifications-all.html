@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>所有頁面通知功能測試</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .success { background: #28a745; }
+        .error { background: #dc3545; }
+        .warning { background: #ffc107; color: #212529; }
+        .info { background: #17a2b8; }
+        .result {
+            margin-top: 15px;
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>所有頁面通知功能測試</h1>
+        
+        <div class="test-section">
+            <h3>訂閱者頁面通知測試</h3>
+            <p>模擬訂閱者頁面的通知功能</p>
+            <button onclick="testSubscribersNotifications()">測試訂閱者通知</button>
+            <div id="subscribersResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>分析頁面通知測試</h3>
+            <p>模擬分析頁面的通知功能</p>
+            <button onclick="testAnalyticsNotifications()">測試分析通知</button>
+            <div id="analyticsResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>審批頁面通知測試</h3>
+            <p>模擬審批頁面的通知功能</p>
+            <button onclick="testApprovalsNotifications()">測試審批通知</button>
+            <div id="approvalsResult" class="result"></div>
+        </div>
+
+        <div class="test-section">
+            <h3>所有通知類型測試</h3>
+            <button class="success" onclick="NotificationUtils.success('成功通知測試')">成功通知</button>
+            <button class="error" onclick="NotificationUtils.error('錯誤通知測試')">錯誤通知</button>
+            <button class="warning" onclick="NotificationUtils.warning('警告通知測試')">警告通知</button>
+            <button class="info" onclick="NotificationUtils.info('資訊通知測試')">資訊通知</button>
+            <button onclick="NotificationUtils.show('自定義通知測試', 'custom')">自定義通知</button>
+        </div>
+    </div>
+
+    <!-- 引入所有必要的 JavaScript 文件 -->
+    <script src="js/utils.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/state-manager.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-auth-guard.js"></script>
+    <script src="js/main.js"></script>
+
+    <script>
+        function log(elementId, message, type = 'info') {
+            const element = document.getElementById(elementId);
+            const timestamp = new Date().toLocaleTimeString();
+            const logMessage = `[${timestamp}] ${message}\n`;
+            element.textContent += logMessage;
+        }
+
+        function testSubscribersNotifications() {
+            log('subscribersResult', '開始測試訂閱者頁面通知...');
+            
+            try {
+                // 測試成功通知
+                NotificationUtils.success('訂閱者新增成功！');
+                log('subscribersResult', '✅ 成功通知測試完成', 'success');
+                
+                // 測試錯誤通知
+                setTimeout(() => {
+                    NotificationUtils.error('訂閱者刪除失敗！');
+                    log('subscribersResult', '✅ 錯誤通知測試完成', 'success');
+                }, 1000);
+                
+                // 測試警告通知
+                setTimeout(() => {
+                    NotificationUtils.warning('訂閱者資料不完整');
+                    log('subscribersResult', '✅ 警告通知測試完成', 'success');
+                }, 2000);
+                
+            } catch (error) {
+                log('subscribersResult', '❌ 通知測試失敗: ' + error.message, 'error');
+            }
+        }
+
+        function testAnalyticsNotifications() {
+            log('analyticsResult', '開始測試分析頁面通知...');
+            
+            try {
+                // 測試資訊通知
+                NotificationUtils.info('分析數據已更新');
+                log('analyticsResult', '✅ 資訊通知測試完成', 'success');
+                
+                // 測試成功通知
+                setTimeout(() => {
+                    NotificationUtils.success('報告生成成功！');
+                    log('analyticsResult', '✅ 成功通知測試完成', 'success');
+                }, 1000);
+                
+                // 測試錯誤通知
+                setTimeout(() => {
+                    NotificationUtils.error('數據載入失敗');
+                    log('analyticsResult', '✅ 錯誤通知測試完成', 'success');
+                }, 2000);
+                
+            } catch (error) {
+                log('analyticsResult', '❌ 通知測試失敗: ' + error.message, 'error');
+            }
+        }
+
+        function testApprovalsNotifications() {
+            log('approvalsResult', '開始測試審批頁面通知...');
+            
+            try {
+                // 測試成功通知
+                NotificationUtils.success('活動審批成功！');
+                log('approvalsResult', '✅ 成功通知測試完成', 'success');
+                
+                // 測試警告通知
+                setTimeout(() => {
+                    NotificationUtils.warning('待審批項目過多');
+                    log('approvalsResult', '✅ 警告通知測試完成', 'success');
+                }, 1000);
+                
+                // 測試錯誤通知
+                setTimeout(() => {
+                    NotificationUtils.error('審批操作失敗');
+                    log('approvalsResult', '✅ 錯誤通知測試完成', 'success');
+                }, 2000);
+                
+            } catch (error) {
+                log('approvalsResult', '❌ 通知測試失敗: ' + error.message, 'error');
+            }
+        }
+
+        // 頁面載入時檢查通知系統
+        window.addEventListener('load', function() {
+            console.log('頁面載入完成，檢查通知系統...');
+            
+            if (typeof NotificationUtils !== 'undefined') {
+                console.log('✅ NotificationUtils 已載入');
+                console.log('可用方法:', Object.getOwnPropertyNames(NotificationUtils));
+            } else {
+                console.error('❌ NotificationUtils 未載入');
+            }
+        });
+    </script>
+</body>
+</html>

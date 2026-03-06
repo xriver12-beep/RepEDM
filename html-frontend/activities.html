@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動日誌 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .activity-full-list {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .activity-filter {
+            display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .filter-input {
+            padding: 8px 12px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            margin-top: 20px;
+            gap: 10px;
+        }
+        .page-btn {
+            padding: 6px 12px;
+            border: 1px solid #ddd;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .page-btn.active {
+            background: #1976d2;
+            color: white;
+            border-color: #1976d2;
+        }
+    </style>
+</head>
+<body>
+    <!-- 側邊欄 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">電子報管理系統</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="users.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">使用者管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="email-logs.html" class="menu-link">
+                    <span class="menu-icon">📋</span>
+                    <span class="menu-text">郵件日誌</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="analytics.html" class="menu-link">
+                    <span class="menu-icon">📈</span>
+                    <span class="menu-text">成效分析</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="settings.html" class="menu-link">
+                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-text">系統設定</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 主要內容區域 -->
+    <main class="main-content" id="mainContent">
+        <!-- 頂部導航 -->
+        <header class="top-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="page-title">活動日誌</h1>
+            <div class="header-actions">
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <span class="user-avatar">U</span>
+                        <div class="user-info">
+                            <span class="user-name">載入中...</span>
+                            <span class="user-role">-</span>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-avatar-large">U</div>
+                            <div class="user-details">
+                                <div class="user-name-large">載入中...</div>
+                                <div class="user-email">-</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            個人資料
+                        </a>
+                        <a href="settings.html" class="dropdown-item" data-role-required="Admin">
+                            <span class="dropdown-icon">⚙️</span>
+                            系統設定
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                            <span class="dropdown-icon">🚪</span>
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 頁面內容 -->
+        <div class="page-content">
+            <!-- 頁面標題 -->
+            <div class="page-header">
+                <h1 class="page-heading">系統活動日誌</h1>
+                <p class="page-description">查看系統內發生的所有活動記錄</p>
+            </div>
+
+            <div class="activity-full-list">
+                <div class="activity-filter">
+                    <input type="text" placeholder="搜尋活動..." class="filter-input" id="searchActivity">
+                    <select class="filter-input" id="filterType">
+                        <option value="all">所有類型</option>
+                        <option value="campaign">活動</option>
+                        <option value="subscriber">訂閱者</option>
+                        <option value="template">EDM</option>
+                        <option value="system">系統</option>
+                    </select>
+                    <button class="btn btn-primary" id="refreshBtn">重新整理</button>
+                </div>
+
+                <div class="activity-list" id="activitiesContainer">
+                    <div class="text-center p-4">載入中...</div>
+                </div>
+
+                <div class="pagination" id="pagination">
+                    <!-- 分頁按鈕將由 JS 生成 -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/utils.js?v=4"></script>
+    <script src="js/state-manager.js?v=4"></script>
+    <script src="js/admin-auth.js?v=4"></script>
+    <script src="js/admin-auth-guard.js?v=4"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/components.js?v=4"></script>
+    <script src="js/main.js?v=4"></script>
+    <script src="js/activities.js?v=1"></script>
+    <script>
+        // 管理員認證守衛初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authGuard = new AdminAuthGuard();
+            
+            try {
+                // 初始化認證守衛
+                await authGuard.init();
+                
+                // 獲取當前用戶並更新用戶界面
+                if (adminAuth && adminAuth.isAuthenticated()) {
+                    const user = await adminAuth.getCurrentUser();
+                    if (user && authGuard.updateUserInterface) {
+                        authGuard.updateUserInterface(user);
+                    }
+                }
+            } catch (error) {
+                console.error('認證初始化失敗:', error);
+            }
+        });
+    </script>
+</body>
+</html>

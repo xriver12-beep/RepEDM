@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>現代化樣板管理系統</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f5f5f5;
+        }
+        header {
+            background-color: #2c3e50;
+            color: white;
+            padding: 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .main-container {
+            display: grid;
+            grid-template-columns: 350px 1fr;
+            flex: 1;
+            overflow: hidden;
+        }
+        .sidebar {
+            background-color: white;
+            padding: 1rem;
+            border-right: 1px solid #ddd;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+        }
+        .preview-area {
+            background-color: #e9ecef;
+            padding: 1rem;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        iframe {
+            width: 100%;
+            height: 100%;
+            border: 1px solid #ccc;
+            background-color: white;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        
+        /* Form Elements */
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+        }
+        input[type="text"], input[type="number"], input[type="file"] {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            padding: 0.75rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.2s;
+        }
+        button:hover {
+            background-color: #2980b9;
+        }
+        button.secondary {
+            background-color: #95a5a6;
+        }
+        button.secondary:hover {
+            background-color: #7f8c8d;
+        }
+        
+        .zone-item {
+            border: 1px solid #eee;
+            padding: 10px;
+            border-radius: 4px;
+            background: #fafafa;
+            margin-bottom: 10px;
+        }
+        .zone-header {
+            display: flex;
+            justify-content: space-between;
+            font-size: 0.9rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+        
+        /* Slider styling */
+        input[type="range"] {
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div style="font-size: 1.2rem; font-weight: bold;">Modern Template Manager</div>
+        <div>
+            <a href="templates.html" style="color: #ccc; text-decoration: none; margin-right: 10px;">回到舊版</a>
+        </div>
+    </header>
+    
+    <div class="main-container">
+        <!-- Left Sidebar: Settings -->
+        <div class="sidebar">
+            <div class="section">
+                <h3>1. 上傳樣板</h3>
+                <div class="form-group">
+                    <label>樣板名稱</label>
+                    <input type="text" id="templateName" placeholder="例如: 電子報-2026-Q1">
+                </div>
+                <div class="form-group">
+                    <label>上傳檔案 (HTML 或 ZIP)</label>
+                    <input type="file" id="htmlFile" accept=".html,.htm,.zip">
+                    <small style="display:block; color:#666; margin-top:5px;">
+                        支援上傳 HTML 原始檔或包含 HTML 的 ZIP 壓縮檔<br>
+                        <a href="sample_template.zip" download style="color: #3498db;">📥 下載範例樣板 (sample_template.zip)</a>
+                    </small>
+                </div>
+                <button id="btnParse" class="secondary">解析結構 (Auto-Parse)</button>
+            </div>
+
+            <div class="section" id="globalVarsSection" style="display: none;">
+                <h3>1.5 全域變數設定</h3>
+                <div class="form-group">
+                    <label>發送日期 ({{date}})</label>
+                    <input type="date" id="globalDate">
+                </div>
+                <div class="form-group">
+                    <label>電子報主旨 ({{subject}})</label>
+                    <input type="text" id="globalSubject" placeholder="請輸入主旨...">
+                </div>
+            </div>
+
+            <div class="section" id="zoneConfigSection" style="display: none;">
+                <h3>2. 區塊設定 (Zones)</h3>
+                <p style="font-size: 0.8rem; color: #666;">系統自動偵測到以下動態區塊：</p>
+                <div id="zonesList">
+                    <!-- Zones will be injected here -->
+                </div>
+            </div>
+
+            <div class="section" id="actionsSection" style="display: none;">
+                <h3>3. 預覽與儲存</h3>
+                <button id="btnUpdatePreview" style="margin-bottom: 10px;">更新預覽 (Render)</button>
+                <button id="btnSave" style="background-color: #27ae60;">儲存樣板 (Save)</button>
+            </div>
+        </div>
+
+        <!-- Right: Preview -->
+        <div class="preview-area">
+            <iframe id="previewFrame" title="Preview"></iframe>
+        </div>
+    </div>
+
+    <script src="js/template_manager.js"></script>
+</body>
+</html>

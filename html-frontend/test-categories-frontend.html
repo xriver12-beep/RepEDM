@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>分類測試</title>
+</head>
+<body>
+    <h1>分類載入測試</h1>
+    <div id="results"></div>
+    <button onclick="testCategories()">測試分類載入</button>
+
+    <script src="js/dev-config.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/api.js"></script>
+    
+    <script>
+        async function testCategories() {
+            const resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '<p>測試中...</p>';
+            
+            try {
+                console.log('開始測試分類載入...');
+                console.log('window.subscriberService 存在:', !!window.subscriberService);
+                
+                if (window.subscriberService) {
+                    console.log('調用 subscriberService.getCategories()...');
+                    const response = await window.subscriberService.getCategories();
+                    console.log('API 響應:', response);
+                    
+                    const categories = response.categories || [];
+                    console.log('分類數量:', categories.length);
+                    
+                    let html = `
+                        <h2>測試結果</h2>
+                        <p>分類數量: ${categories.length}</p>
+                        <h3>前 10 個分類:</h3>
+                        <ul>
+                    `;
+                    
+                    categories.slice(0, 10).forEach(category => {
+                        html += `<li>ID: ${category.id}, 名稱: ${category.name}, 類型: ${category.type}, 訂閱者: ${category.subscriber_count}</li>`;
+                    });
+                    
+                    html += '</ul>';
+                    resultsDiv.innerHTML = html;
+                } else {
+                    resultsDiv.innerHTML = '<p style="color: red;">subscriberService 不存在</p>';
+                }
+            } catch (error) {
+                console.error('測試失敗:', error);
+                resultsDiv.innerHTML = `<p style="color: red;">測試失敗: ${error.message}</p>`;
+            }
+        }
+        
+        // 頁面載入後自動測試
+        window.addEventListener('load', () => {
+            setTimeout(testCategories, 1000);
+        });
+    </script>
+</body>
+</html>

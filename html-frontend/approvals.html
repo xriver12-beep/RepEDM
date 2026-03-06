@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>審核工作流程 - WintonEDM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/approvals.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">電子報前台系統</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="user-dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="subscribers.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">訂閱者管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invalid-emails.html" class="menu-link">
+                    <span class="menu-icon">⚠️</span>
+                    <span class="menu-text">無效信箱查詢</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="campaigns.html" class="menu-link">
+                    <span class="menu-icon">📧</span>
+                    <span class="menu-text">活動製作</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="templates.html" class="menu-link">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">EDM管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="assets.html" class="menu-link">
+                    <span class="menu-icon">🖼️</span>
+                    <span class="menu-text">素材管理</span>
+                </a>
+            </li>
+            <li class="menu-item active" data-role-required="Admin,Manager,Approver">
+                <a href="approvals.html" class="menu-link">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-text">送審作業</span>
+                </a>
+            </li>
+        </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="main-content">
+            <!-- 頂部導航 -->
+            <header class="top-header">
+                <div class="header-left">
+                    <button class="sidebar-toggle">☰</button>
+                    <h1>審核工作流程</h1>
+                </div>
+                <div class="header-right">
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-avatar">👤</span>
+                            <span class="user-name">載入中...</span>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-info">
+                                    <span class="user-name">載入中...</span>
+                                    <span class="user-role">使用者</span>
+                                </div>
+                            </div>
+                            <a href="user-profile.html" class="dropdown-item">個人資料</a>
+                            <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                                <span class="dropdown-icon">🚪</span>
+                                登出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 頁面內容 -->
+            <div class="page-content">
+                <!-- 統計概覽 -->
+                <div class="stats-overview">
+                    <div class="stat-card">
+                        <div class="stat-icon">⏳</div>
+                        <div class="stat-info">
+                            <h3 data-stat="pendingApprovals">0</h3>
+                            <p>進行中案件</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">✅</div>
+                        <div class="stat-info">
+                            <h3 data-stat="approvedToday">0</h3>
+                            <p>今日已完成</p>
+                        </div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-icon">❌</div>
+                        <div class="stat-info">
+                            <h3 data-stat="rejectedToday">0</h3>
+                            <p>今日已拒絕</p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- 工具欄 -->
+                <div class="toolbar">
+                    <div class="toolbar-left">
+                        <div class="filter-group">
+                            <select id="statusFilter">
+                                <option value="active" selected>所有進行中</option>
+                                <option value="pending_my_approval">待我審核</option>
+                                <option value="">所有狀態</option>
+                                <option value="pending">待審核</option>
+                                <option value="in_review">審核中</option>
+                                <option value="approved">已通過</option>
+                                <option value="rejected">已拒絕</option>
+                                <option value="revision">需修改</option>
+                                <option value="cancelled">已取消</option>
+                            </select>
+                            <select id="typeFilter">
+                                <option value="">所有類型</option>
+                                <option value="campaign">活動</option>
+                                <option value="template">模板</option>
+                                <option value="content">內容</option>
+                            </select>
+                            <select id="priorityFilter">
+                                <option value="">所有優先級</option>
+                                <option value="high">高</option>
+                                <option value="medium">中</option>
+                                <option value="low">低</option>
+                            </select>
+                        </div>
+                        <div class="search-box">
+                            <input type="text" id="searchInput" placeholder="搜尋審核項目...">
+                            <button class="search-btn">🔍</button>
+                        </div>
+                    </div>
+                    <div class="toolbar-right">
+                        <button class="btn btn-secondary" id="bulkApproveBtn" disabled>批量通過</button>
+                        <button class="btn btn-secondary" id="bulkRejectBtn" disabled>批量拒絕</button>
+
+                    </div>
+                </div>
+
+                <!-- 審核列表 -->
+                <div class="approvals-list">
+                    <div id="processingIndicator" class="processing-indicator" style="display: none;">
+                        <span class="processing-text">處理中...請稍候!</span>
+                    </div>
+                    <div class="list-header">
+                        <div class="bulk-select">
+                            <input type="checkbox" id="selectAll">
+                            <label for="selectAll">全選</label>
+                        </div>
+                        <div class="sort-controls">
+                            <label>排序：</label>
+                            <select id="sortBy">
+                                <option value="created_date">提交時間</option>
+                                <option value="priority">優先級</option>
+                                <option value="type">類型</option>
+                                <option value="status">狀態</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="approvals-container" id="approvalsContainer">
+                        <!-- 審核項目將在這裡動態生成 -->
+                    </div>
+
+                    <!-- 分頁 -->
+                    <div class="pagination">
+                        <div class="pagination-info" id="approvalsInfo">
+                            顯示 1-10 項，共 0 項
+                        </div>
+                        <div class="pagination-controls">
+                            <button id="approvalsPrevPage" disabled>上一頁</button>
+                            <div class="page-numbers" id="approvalsPageNumbers">
+                                <!-- 頁碼將在這裡生成 -->
+                            </div>
+                            <button id="approvalsNextPage" disabled>下一頁</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 審核詳情模態框 -->
+    <div class="modal modal-xxl" id="approvalDetailModal" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">審核詳情</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="approval-detail-tabs">
+                        <button class="tab-btn active" data-tab="overview">概覽</button>
+                        <button class="tab-btn" data-tab="content">內容預覽</button>
+                        <button class="tab-btn" data-tab="history">審核歷史</button>
+                        <button class="tab-btn" data-tab="comments">評論記錄</button>
+                    </div>
+
+                    <div class="tab-content">
+                        <!-- 概覽標籤 -->
+                        <div class="tab-pane active" id="overview">
+                            <div class="overview-grid">
+                                <div class="overview-item">
+                                    <label>項目名稱：</label>
+                                    <p id="detailItemName">-</p>
+                                </div>
+                                <div class="overview-item">
+                                    <label>提交者：</label>
+                                    <p id="detailSubmitter">-</p>
+                                </div>
+                                <div class="overview-item">
+                                    <label>提交時間：</label>
+                                    <p id="detailSubmitTime">-</p>
+                                </div>
+                                <div class="overview-item">
+                                    <label>狀態：</label>
+                                    <p id="detailStatus">-</p>
+                                </div>
+                                <div class="overview-item">
+                                    <!-- Spacer for grid alignment -->
+                                </div>
+                                <div class="overview-item">
+                                    <label>預計計送時間：</label>
+                                    <p id="detailScheduledTime">-</p>
+                                </div>
+                                <div class="overview-item full-width">
+                                    <label>說明：</label>
+                                    <p id="detailDescription">-</p>
+                                </div>
+                                <div class="overview-item full-width">
+                                    <label>目標受眾：</label>
+                                    <p id="detailTargetAudience">-</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 內容標籤 -->
+                        <div class="tab-pane" id="content">
+                            <div class="content-preview">
+                                <div class="preview-toolbar">
+                                    <button class="btn btn-secondary" id="previewModeBtn">分頁預覽</button>
+                                    <button class="btn btn-secondary" id="sourceCodeBtn">原始碼</button>
+                                    <button class="btn btn-secondary" id="fullScreenBtn"><i class="fas fa-expand"></i> 全螢幕</button>
+                                </div>
+                                <div class="preview-container" id="contentPreview">
+                                    <!-- 內容預覽將在這裡顯示 -->
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- 歷史記錄標籤 -->
+                        <div class="tab-pane" id="history">
+                            <div class="history-timeline" id="historyTimeline">
+                                <!-- 歷史記錄將在這裡顯示 -->
+                            </div>
+                        </div>
+
+                        <!-- 評論標籤 -->
+                        <div class="tab-pane" id="comments">
+                            <div class="comments-section">
+                                <div class="comments-list" id="commentsList">
+                                    <!-- 評論列表將在這裡顯示 -->
+                                </div>
+                                <div class="add-comment">
+                                    <textarea id="newComment" placeholder="添加評論..." rows="3"></textarea>
+                                    <button class="btn btn-primary" id="addCommentBtn">添加評論</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <div class="approval-actions">
+                        <button class="btn btn-success" id="approveBtn">通過</button>
+                        <button class="btn btn-warning" id="revisionBtn">需要修改</button>
+                        <button class="btn btn-danger" id="rejectBtn">拒絕</button>
+                        <button class="btn btn-danger" id="emergencyApproveBtn" style="display: none; background-color: #dc3545; border-color: #dc3545;">緊急放行</button>
+                        <button class="btn btn-secondary" id="cancelBtn">取消</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 審核決定模態框 -->
+    <div class="modal" id="approvalDecisionModal" data-backdrop="static">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="decisionModalTitle">審核決定</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="decision-form">
+                        <div class="form-group" id="cannedReasonGroup" style="display: none;">
+                            <label for="cannedReasonSelect">常用理由：</label>
+                            <select id="cannedReasonSelect" class="form-control">
+                                <option value="">-- 請選擇常用理由 --</option>
+                                <option value="內容資訊有誤">內容資訊有誤</option>
+                                <option value="排版格式跑版">排版格式跑版</option>
+                                <option value="連結測試失效">連結測試失效</option>
+                                <option value="圖片解析度不足">圖片解析度不足</option>
+                                <option value="不符合品牌規範">不符合品牌規範</option>
+                                <option value="custom">自訂理由</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="decisionReason">理由說明：</label>
+                            <textarea id="decisionReason" placeholder="請輸入審核理由..." rows="4" required></textarea>
+                        </div>
+                        <div class="form-group" id="revisionInstructions" style="display: none;">
+                            <label for="revisionNotes">修改說明：</label>
+                            <textarea id="revisionNotes" placeholder="請詳細說明需要修改的地方..." rows="3"></textarea>
+                        </div>
+                        <div class="form-group" id="forceSendGroup" style="display: none; margin-top: 15px; padding: 10px; background-color: #fff3cd; border: 1px solid #ffeeba; border-radius: 4px;">
+                            <div class="custom-control custom-checkbox" style="display: flex; align-items: center;">
+                                <input type="checkbox" class="custom-control-input" id="forceSendCheck" style="margin-right: 8px; width: 16px; height: 16px;">
+                                <label class="custom-control-label" for="forceSendCheck" style="font-weight: bold; color: #856404; margin-bottom: 0;">強制發送 (忽略頻率限制)</label>
+                            </div>
+                            <small class="form-text text-muted" style="display: block; margin-top: 5px; color: #856404;">
+                                勾選此項將強制發送給所有受眾，包含已達頻率上限的用戶。僅限重大公告使用。
+                            </small>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-primary" id="confirmDecisionBtn">確認</button>
+                    <button class="btn btn-secondary" id="cancelDecisionBtn">取消</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 目標受眾詳情模態框 -->
+    <div class="modal modal-large" id="audienceDetailModal" style="z-index: 1060;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>目標受眾詳情</h3>
+                    <button class="modal-close">&times;</button>
+                </div>
+                <div class="modal-body">
+                <div id="audienceDetailContent">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <span id="audienceTotalCount" class="text-muted"></span>
+                        <div class="pagination-controls" id="audiencePaginationControls" style="display: none;">
+                            <button class="btn btn-sm btn-outline-secondary" id="audiencePrevBtn" disabled>&lt;</button>
+                            <span id="audiencePageInfo" class="mx-2">1 / 1</span>
+                            <button class="btn btn-sm btn-outline-secondary" id="audienceNextBtn" disabled>&gt;</button>
+                        </div>
+                    </div>
+                    <div class="audience-list-container" style="max-height: 400px; overflow-y: auto;">
+                        <ul class="list-group" id="audienceList">
+                            <!-- 列表內容將由 JS 生成 -->
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="closeAudienceDetailBtn">關閉</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+    <script src="js/utils.js?v=6"></script>
+    <script src="js/notification.js?v=6"></script>
+    <script src="js/state-manager.js?v=6"></script>
+    <script src="js/components.js?v=6"></script>
+    <script src="js/api.js?v=6"></script>
+    <script src="js/admin-auth.js?v=6"></script>
+    <script src="js/user-auth.js?v=6"></script>
+    <script src="js/auth-guard.js?v=6"></script>
+    <script src="js/main.js?v=6"></script>
+    <script src="js/approvals.js?v=8"></script>
+</body>
+</html>

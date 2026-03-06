@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>使用者管理 - WintonEDM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/users.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">電子報管理系統</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-text">儀表板</span>
+                    </a>
+                </li>
+                <li class="menu-item active" data-role-required="Admin,Manager">
+                    <a href="users.html" class="menu-link">
+                        <span class="menu-icon">👥</span>
+                        <span class="menu-text">使用者管理</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="email-logs.html" class="menu-link">
+                        <span class="menu-icon">📋</span>
+                        <span class="menu-text">郵件日誌</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="queue.html" class="menu-link">
+                        <span class="menu-icon">📨</span>
+                        <span class="menu-text">信件佇列</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="analytics.html" class="menu-link">
+                        <span class="menu-icon">📈</span>
+                        <span class="menu-text">成效分析</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="subscriber-stats.html" class="menu-link">
+                        <span class="menu-icon">🌏</span>
+                        <span class="menu-text">訂閱者統計</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin">
+                    <a href="settings.html" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">系統設定</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="main-content" id="mainContent">
+            <!-- 頂部導航 -->
+            <header class="top-header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="page-title">使用者管理</h1>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-avatar">U</span>
+                            <div class="user-info">
+                                <span class="user-name">載入中...</span>
+                                <span class="user-role">-</span>
+                            </div>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-avatar-large">U</div>
+                                <div class="user-details">
+                                    <div class="user-name-large">載入中...</div>
+                                    <div class="user-email">-</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="profile.html" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span>
+                                個人資料
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn" onclick="adminAuthGuard.logout()">
+                                <span class="dropdown-icon">🚪</span>
+                                登出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <div class="container">
+                <!-- 頁面標題 -->
+                <header class="page-header">
+                    <!-- <h1 class="page-title">使用者管理</h1> -->
+                <button class="btn btn-primary" id="addUserBtn">
+                    <i class="icon-plus"></i>
+                    新增使用者
+                </button>
+            </header>
+
+            <!-- 統計卡片 -->
+            <section class="stats-section">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-number" id="totalUsers">-</div>
+                        <div class="stat-label">總使用者數</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="activeUsers">-</div>
+                        <div class="stat-label">活躍使用者</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="adminUsers">-</div>
+                        <div class="stat-label">管理員</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-number" id="managerUsers">-</div>
+                        <div class="stat-label">經理</div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- 工具欄 -->
+            <section class="toolbar">
+                <div class="toolbar-left">
+                    <div class="search-box">
+                        <input type="text" 
+                               id="searchInput" 
+                               class="search-input" 
+                               placeholder="搜尋使用者...">
+                        <button class="btn btn-primary" id="searchBtn">
+                            <i class="icon-search"></i>
+                            搜尋
+                        </button>
+                    </div>
+                    <select id="roleFilter" class="form-select">
+                        <option value="">所有角色</option>
+                        <option value="Admin">管理員</option>
+                        <option value="Manager">經理</option>
+                        <option value="Approver">審核員</option>
+                        <option value="User">一般使用者</option>
+                    </select>
+                    <select id="statusFilter" class="form-select">
+                        <option value="active">啟用</option>
+                        <option value="inactive">停用</option>
+                        <option value="all">所有狀態</option>
+                    </select>
+                </div>
+                <div class="toolbar-right">
+                    <button class="btn btn-outline" id="exportUsersBtn">
+                        <i class="icon-download"></i>
+                        匯出
+                    </button>
+                    <button class="btn btn-outline" id="refreshUsersBtn">
+                        <i class="icon-refresh"></i>
+                        重新整理
+                    </button>
+                </div>
+            </section>
+
+            <!-- 使用者表格 -->
+            <section class="table-section">
+                <div class="table-container">
+                    <table class="data-table" id="usersTable">
+                        <thead>
+                            <tr>
+                                <th>
+                                    <input type="checkbox" id="selectAll">
+                                </th>
+                                <th>使用者名稱</th>
+                                <th>全名</th>
+                                <th>電子郵件</th>
+                                <th>角色</th>
+                                <th>分配審核流程</th>
+                                <th>狀態</th>
+                                <th>建立時間</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr>
+                                <td colspan="6" class="loading">載入中...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- 分頁 -->
+                <div class="pagination-container" id="paginationContainer">
+                    <!-- 分頁將由 JavaScript 動態生成 -->
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <!-- 使用者模態框 -->
+    <div class="modal" id="userModal" data-component="Modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="userModalTitle">新增使用者</h2>
+                <button class="modal-close" id="closeUserModalBtn">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="userForm" class="form">
+                    <input type="hidden" id="userId" name="id">
+                    
+                    <div class="form-group">
+                        <label for="username" class="form-label">使用者名稱 *</label>
+                        <input type="text" 
+                               id="username" 
+                               name="username" 
+                               class="form-input" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="email" class="form-label">電子郵件 *</label>
+                        <input type="email" 
+                               id="email" 
+                               name="email" 
+                               class="form-input" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="fullName" class="form-label">全名 *</label>
+                        <input type="text" 
+                               id="fullName" 
+                               name="fullName" 
+                               class="form-input" 
+                               required>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="role" class="form-label">角色 *</label>
+                        <select id="role" name="role" class="form-select" required>
+                            <option value="">請選擇角色</option>
+                            <option value="Admin">管理員</option>
+                            <option value="Manager">經理</option>
+                            <option value="Approver">審核員</option>
+                            <option value="User">一般使用者</option>
+                            <option value="Viewer">檢視者</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group" id="assignedWorkflowGroup">
+                        <label for="assignedWorkflow" class="form-label">分配審核流程</label>
+                        <select id="assignedWorkflow" name="assignedWorkflow" class="form-select">
+                            <option value="">使用預設流程</option>
+                            <!-- 工作流程選項將由 JS 動態載入 -->
+                        </select>
+                        <small class="form-text text-muted">若未選擇，將使用系統預設的審核流程</small>
+                    </div>
+
+                    <div class="form-group" id="passwordGroup">
+                        <label for="password" class="form-label">密碼 *</label>
+                        <input type="password" 
+                               id="password" 
+                               name="password" 
+                               class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">狀態</label>
+                        <div class="form-check">
+                            <input type="checkbox" 
+                                   id="is_active" 
+                                   name="is_active" 
+                                   class="form-check-input" 
+                                   checked>
+                            <label for="is_active" class="form-check-label">啟用</label>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelUserModalBtn">
+                    取消
+                </button>
+                <button type="submit" form="userForm" class="btn btn-primary" id="saveUserBtn">
+                    儲存
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 重設密碼模態框 -->
+    <div class="modal" id="resetPasswordModal" data-component="Modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">重設密碼</h2>
+                <button class="modal-close" id="closeResetPasswordModalBtn">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="resetPasswordUserInfo" class="text-info mb-3"></p>
+                <form id="resetPasswordForm" class="form">
+                    <input type="hidden" id="resetUserId" name="userId">
+                    
+                    <div class="form-group">
+                        <label for="newPassword" class="form-label">新密碼 *</label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   id="newPassword" 
+                                   name="newPassword" 
+                                   class="form-input" 
+                                   required
+                                   minlength="8"
+                                   title="密碼長度至少8個字符，且必須包含大小寫字母和數字">
+                            <button type="button" class="btn-icon toggle-password-visibility" data-target="newPassword">
+                                <i class="far fa-eye-slash" id="newPassword-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword" class="form-label">確認密碼 *</label>
+                        <div class="input-group">
+                            <input type="password" 
+                                   id="confirmPassword" 
+                                   name="confirmPassword" 
+                                   class="form-input" 
+                                   required
+                                   minlength="8"
+                                   title="密碼長度至少8個字符，且必須包含大小寫字母和數字">
+                            <button type="button" class="btn-icon toggle-password-visibility" data-target="confirmPassword">
+                                <i class="far fa-eye" id="confirmPassword-icon"></i>
+                            </button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelResetPasswordModalBtn">
+                    取消
+                </button>
+                <button type="submit" form="resetPasswordForm" class="btn btn-primary">
+                    重設密碼
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 刪除確認模態框 -->
+    <div class="modal" id="deleteConfirmModal" data-component="Modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">確認刪除</h2>
+                <button class="modal-close" id="closeDeleteConfirmModalBtn">
+                    <i class="icon-close"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>您確定要刪除使用者 <strong id="deleteUserName"></strong> 嗎？</p>
+                <p class="text-warning">此操作無法復原。</p>
+                <input type="hidden" id="deleteUserId">
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelDeleteConfirmModalBtn">
+                    取消
+                </button>
+                <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                    確認刪除
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 通知容器 -->
+    <div id="notificationContainer" class="notification-container"></div>
+
+    <!-- JavaScript -->
+    <script src="js/utils.js?v=3"></script>
+    <script src="js/api.js?v=8"></script>
+    <script src="js/admin-auth.js?v=3"></script>
+    <script src="js/admin-auth-guard.js?v=3"></script>
+    <script src="js/components.js?v=3"></script>
+    <script src="js/userService.js?v=3"></script>
+    <script src="js/notification.js?v=3"></script>
+    <script src="js/userManager.js?v=3"></script>
+</body>
+</html>

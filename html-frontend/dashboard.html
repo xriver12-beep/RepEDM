@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員儀表板 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 側邊欄 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">電子報管理系統</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item active">
+                <a href="dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager">
+                <a href="users.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">使用者管理</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager">
+                <a href="email-logs.html" class="menu-link">
+                    <span class="menu-icon">📋</span>
+                    <span class="menu-text">郵件日誌</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager">
+                <a href="queue.html" class="menu-link">
+                    <span class="menu-icon">📨</span>
+                    <span class="menu-text">信件佇列</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="analytics.html" class="menu-link">
+                    <span class="menu-icon">📈</span>
+                    <span class="menu-text">成效分析</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="subscriber-stats.html" class="menu-link">
+                    <span class="menu-icon">🌏</span>
+                    <span class="menu-text">訂閱者統計</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin">
+                <a href="settings.html" class="menu-link">
+                    <span class="menu-icon">⚙️</span>
+                    <span class="menu-text">系統設定</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 主要內容區域 -->
+    <main class="main-content" id="mainContent">
+        <!-- 頂部導航 -->
+        <header class="top-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="page-title">儀表板</h1>
+            <div class="header-actions">
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <span class="user-avatar">U</span>
+                        <div class="user-info">
+                            <span class="user-name">載入中...</span>
+                            <span class="user-role">-</span>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-avatar-large">U</div>
+                            <div class="user-details">
+                                <div class="user-name-large">載入中...</div>
+                                <div class="user-email">-</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="profile.html" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            個人資料
+                        </a>
+                        <a href="settings.html" class="dropdown-item" data-role-required="Admin">
+                            <span class="dropdown-icon">⚙️</span>
+                            系統設定
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                            <span class="dropdown-icon">🚪</span>
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 頁面內容 -->
+        <div class="page-content">
+            <!-- 頁面標題 -->
+            <div class="page-header">
+                <h1 class="page-heading">儀表板</h1>
+                <p class="page-description">歡迎使用電子報管理系統</p>
+            </div>
+
+            <!-- 系統資訊 -->
+            <div class="system-info-panel" id="systemInfoPanel" style="background: white; padding: 15px 20px; border-radius: 12px; margin-bottom: 24px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); display: none;">
+                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; background: #e3f2fd; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #1976d2;">
+                            <i class="fas fa-server"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 2px;">後端伺服器 (Server)</div>
+                            <div style="font-weight: 600; color: #333;" id="sysHostname">-</div>
+                        </div>
+                    </div>
+                    
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; background: #e8f5e9; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #2e7d32;">
+                            <i class="fas fa-database"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 2px;">資料庫主機 (DB Host)</div>
+                            <div style="font-weight: 600; color: #333;" id="dbHostDisplay">-</div>
+                        </div>
+                    </div>
+
+                    <div style="display: flex; align-items: center; gap: 10px;">
+                        <div style="width: 40px; height: 40px; background: #fff3e0; border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ef6c00;">
+                            <i class="fas fa-table"></i>
+                        </div>
+                        <div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 2px;">資料庫名稱 (DB Name)</div>
+                            <div style="font-weight: 600; color: #333;" id="dbNameDisplay">-</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 統計卡片 -->
+            <div class="stats-grid" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-label">線上前台使用者</div>
+                    <div class="stat-value" id="onlineUserCount">0</div>
+                    <div class="stat-change" style="color: #28a745;">24小時內活躍</div>
+                </div>
+
+                <div class="stat-card">
+                    <div class="stat-label">總訂閱者</div>
+                    <div class="stat-value">1,234</div>
+                    <div class="stat-change positive">↗ +12.5% 較上月</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">活躍用戶</div>
+                    <div class="stat-value">1,156</div>
+                    <div class="stat-change positive">↗ +8.2% 較上月</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">本月發送</div>
+                    <div class="stat-value">45</div>
+                    <div class="stat-change positive">↗ +15.3% 較上月</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">開信率</div>
+                    <div class="stat-value">23.5%</div>
+                    <div class="stat-change positive">↗ +2.1% 較上月</div>
+                </div>
+            </div>
+
+            <!-- 內容區域 -->
+            <div class="content-grid">
+                <!-- 最近活動 -->
+                <div class="content-section recent-activity">
+                    <h2 class="section-title">最近活動</h2>
+                    <div class="activity-list">
+                        <div class="activity-item">
+                            <div class="activity-indicator blue"></div>
+                            <div class="activity-content">
+                                <div class="activity-title">新電子報已發送</div>
+                                <div class="activity-description">「2024年1月電子報」已成功發送給 1,234 位訂閱者</div>
+                                <div class="activity-time">2 小時前</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-indicator green"></div>
+                            <div class="activity-content">
+                                <div class="activity-title">新訂閱者加入</div>
+                                <div class="activity-description">15 位新訂閱者加入了您的郵件列表</div>
+                                <div class="activity-time">4 小時前</div>
+                            </div>
+                        </div>
+                        
+                        <div class="activity-item">
+                            <div class="activity-indicator orange"></div>
+                            <div class="activity-content">
+                                <div class="activity-title">EDM已更新</div>
+                                <div class="activity-description">「月報EDM」已更新並等待審核</div>
+                                <div class="activity-time">1 天前</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 登入日誌 -->
+                <div class="content-section login-logs-section">
+                    <h2 class="section-title">最近使用者登入/登出記錄</h2>
+                    <div class="table-responsive">
+                        <table class="data-table" id="loginLogsTable">
+                            <thead>
+                                <tr>
+                                    <th>使用者</th>
+                                    <th>IP 位址</th>
+                                    <th>登入時間</th>
+                                    <th>登出時間</th>
+                                    <th>狀態</th>
+                                </tr>
+                            </thead>
+                            <tbody id="loginLogsBody">
+                                <tr>
+                                    <td colspan="5" class="text-center">載入中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 全站活動排程與審核狀態 -->
+                <div class="content-section campaign-status-section">
+                    <h2 class="section-title">全站活動排程與審核狀態</h2>
+                    <div class="table-responsive">
+                        <table class="data-table" id="campaignStatusTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">目前狀態</th>
+                                    <th style="width: 25%;">eDM名稱</th>
+                                    <th style="width: 15%;">發送時間</th>
+                                    <th style="width: 10%;">發送人數</th>
+                                    <th style="width: 10%;">開信率</th>
+                                    <th style="width: 10%;">點擊率</th>
+                                    <th style="width: 10%;">建立者</th>
+                                    <th style="width: 10%;">建立時間</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campaignStatusBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">載入中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <!-- 分頁控制區 -->
+                    <div id="campaignPagination" class="pagination-container" style="margin-top: 15px; display: flex; justify-content: flex-end;"></div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="content-section quick-actions">
+                    <h2 class="section-title">快速操作</h2>
+                    <div class="action-buttons">
+                        <button class="action-btn primary" id="createCampaignBtn">
+                            <span class="btn-icon">📧</span>
+                            <span class="btn-text">建立新活動</span>
+                        </button>
+                        
+                        <button class="action-btn secondary" id="manageSubscribersBtn">
+                            <span class="btn-icon">👥</span>
+                            <span class="btn-text">管理訂閱者</span>
+                        </button>
+                        
+                        <button class="action-btn secondary" id="editTemplatesBtn">
+                            <span class="btn-icon">📝</span>
+                            <span class="btn-text">編輯EDM</span>
+                        </button>
+                        
+                        <button class="action-btn secondary" id="viewAnalyticsBtn">
+                            <span class="btn-icon">📈</span>
+                            <span class="btn-text">查看報告</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/utils.js?v=4"></script>
+    <script src="js/state-manager.js?v=4"></script>
+    <script src="js/admin-auth.js?v=4"></script>
+    <script src="js/admin-auth-guard.js?v=4"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/components.js?v=4"></script>
+    <script src="js/main.js?v=4"></script>
+    <script src="js/dashboard.js?v=6"></script>
+    <script>
+        // 管理員認證守衛初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            const authGuard = new AdminAuthGuard();
+            
+            try {
+                // 初始化認證守衛
+                await authGuard.init();
+                
+                // 獲取當前用戶並更新用戶界面
+                if (adminAuth && adminAuth.isAuthenticated()) {
+                    const user = await adminAuth.getCurrentUser();
+                    if (user && authGuard.updateUserInterface) {
+                        authGuard.updateUserInterface(user);
+                    }
+                }
+                
+                // 根據角色顯示/隱藏功能
+                if (authGuard.showHideFunctionsByRole) {
+                    authGuard.showHideFunctionsByRole();
+                }
+            } catch (error) {
+                console.error('認證初始化失敗:', error);
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1309 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>系統設定 - WintonEDM</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/settings.css">
+    <link href="css/category-management.css" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">電子報管理系統</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-text">儀表板</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="users.html" class="menu-link">
+                        <span class="menu-icon">👥</span>
+                        <span class="menu-text">使用者管理</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="email-logs.html" class="menu-link">
+                        <span class="menu-icon">📋</span>
+                        <span class="menu-text">郵件日誌</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="queue.html" class="menu-link">
+                        <span class="menu-icon">📨</span>
+                        <span class="menu-text">信件佇列</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="analytics.html" class="menu-link">
+                        <span class="menu-icon">📈</span>
+                        <span class="menu-text">成效分析</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="subscriber-stats.html" class="menu-link">
+                        <span class="menu-icon">🌏</span>
+                        <span class="menu-text">訂閱者統計</span>
+                    </a>
+                </li>
+                <li class="menu-item active" data-role-required="Admin">
+                    <a href="settings.html" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">系統設定</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 主要內容區域 -->
+        <main class="main-content">
+            <!-- 頂部導航 -->
+            <header class="top-header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="page-title">系統設定</h1>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-avatar">U</span>
+                            <div class="user-info">
+                                <span class="user-name">載入中...</span>
+                                <span class="user-role">-</span>
+                            </div>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-avatar-large">U</div>
+                                <div class="user-details">
+                                    <div class="user-name-large">載入中...</div>
+                                    <div class="user-email">-</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="profile.html" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span>
+                                個人資料
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn" onclick="adminAuthGuard.logout()">
+                                <span class="dropdown-icon">🚪</span>
+                                登出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 設定內容 -->
+            <div class="settings-container">
+                <!-- 設定導航 -->
+                <div class="settings-nav">
+                    <div class="settings-nav-item active" data-section="general">
+                        <span class="nav-icon">🏢</span>
+                        <span class="nav-text">一般設定</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="email">
+                        <span class="nav-icon">📧</span>
+                        <span class="nav-text">郵件設定</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="smtp">
+                        <span class="nav-icon">🔧</span>
+                        <span class="nav-text">SMTP 設定</span>
+                    </div>
+                    <a href="email-logs.html" class="settings-nav-item" style="text-decoration: none; color: inherit;">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">郵件日誌</span>
+                    </a>
+                    <a href="users.html" class="settings-nav-item" style="text-decoration: none; color: inherit;">
+                        <span class="nav-icon">👥</span>
+                        <span class="nav-text">使用者管理</span>
+                    </a>
+                    <div class="settings-nav-item" data-section="categories">
+                        <span class="nav-icon">🏷️</span>
+                        <span class="nav-text">分類管理</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="security">
+                        <span class="nav-icon">🔒</span>
+                        <span class="nav-text">安全設定</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="notifications">
+                        <span class="nav-icon">🔔</span>
+                        <span class="nav-text">通知設定</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="integrations">
+                        <span class="nav-icon">🔗</span>
+                        <span class="nav-text">第三方整合</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="backup">
+                        <span class="nav-icon">💾</span>
+                        <span class="nav-text">備份與還原</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="certificates">
+                        <span class="nav-icon">📜</span>
+                        <span class="nav-text">憑證管理</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="workflow">
+                        <span class="nav-icon">📋</span>
+                        <span class="nav-text">工作流程設定</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="traffic-control">
+                        <span class="nav-icon">🚥</span>
+                        <span class="nav-text">流量控制</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="frequency-capping">
+                        <span class="nav-icon">🛡️</span>
+                        <span class="nav-text">頻率控管</span>
+                    </div>
+                    <div class="settings-nav-item" data-section="advanced">
+                        <span class="nav-icon">⚡</span>
+                        <span class="nav-text">進階設定</span>
+                    </div>
+                </div>
+
+                <!-- 設定內容區域 -->
+                <div class="settings-content">
+                    <!-- 一般設定 -->
+                    <div class="settings-section active" id="general">
+                        <div class="section-header">
+                            <h2>一般設定</h2>
+                            <p>配置系統的基本資訊和偏好設定</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label for="companyName">公司名稱</label>
+                                <input type="text" id="companyName" placeholder="請輸入公司名稱">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="companyLogo">公司標誌</label>
+                                <div class="logo-upload">
+                                    <div class="logo-preview">
+                                        <img id="logoPreview" src="" alt="標誌預覽" style="display: none;">
+                                        <div class="logo-placeholder">點擊上傳標誌</div>
+                                    </div>
+                                    <div class="logo-actions">
+                                        <input type="file" id="logoUpload" accept="image/*" style="display: none;">
+                                        <button type="button" id="logoUploadBtn">選擇檔案</button>
+                                        <span id="logoStatus" class="logo-status"></span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="timezone">時區</label>
+                                <select id="timezone">
+                                    <option value="Asia/Taipei">台北 (UTC+8)</option>
+                                    <option value="Asia/Shanghai">上海 (UTC+8)</option>
+                                    <option value="Asia/Hong_Kong">香港 (UTC+8)</option>
+                                    <option value="UTC">UTC (UTC+0)</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="language">語言</label>
+                                <select id="language">
+                                    <option value="zh-TW">繁體中文</option>
+                                    <option value="zh-CN">簡體中文</option>
+                                    <option value="en-US">English</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="dateFormat">日期格式</label>
+                                <select id="dateFormat">
+                                    <option value="YYYY-MM-DD">2024-01-01</option>
+                                    <option value="DD/MM/YYYY">01/01/2024</option>
+                                    <option value="MM/DD/YYYY">01/01/2024</option>
+                                </select>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveGeneralSettingsBtn">保存設定</button>
+                                <button type="button" class="btn btn-secondary" id="resetGeneralSettingsBtn">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 郵件設定 -->
+                    <div class="settings-section" id="email">
+                        <div class="section-header">
+                            <h2>郵件設定</h2>
+                            <p>配置郵件發送的基本設定</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label for="fromName">寄件者名稱</label>
+                                <input type="text" id="fromName" placeholder="請輸入寄件者名稱">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="fromEmail">寄件者信箱</label>
+                                <input type="email" id="fromEmail" placeholder="請輸入寄件者信箱">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="replyToEmail">回覆信箱</label>
+                                <input type="email" id="replyToEmail" placeholder="請輸入回覆信箱">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="unsubscribeUrl">取消訂閱連結</label>
+                                <input type="url" id="unsubscribeUrl" placeholder="https://example.com/unsubscribe">
+                            </div>
+
+                            <div class="form-group" style="padding: 1.5rem; background-color: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0; margin-top: 2rem;">
+                                <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.1rem; color: #2d3748; font-weight: 600;">追蹤設定</h3>
+                                
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #edf2f7;">
+                                    <div>
+                                        <label for="trackingEnabled" style="display: block; margin-bottom: 0.25rem; font-weight: 600; color: #4a5568;">啟用郵件追蹤</label>
+                                        <p style="margin: 0; font-size: 0.875rem; color: #718096;">總開關：控制是否追蹤任何郵件行為</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="trackingEnabled">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem; padding-bottom: 1.25rem; border-bottom: 1px solid #edf2f7;">
+                                    <div>
+                                        <label for="openTracking" style="display: block; margin-bottom: 0.25rem; font-weight: 600; color: #4a5568;">開信追蹤</label>
+                                        <p style="margin: 0; font-size: 0.875rem; color: #718096;">記錄收件人是否開啟了郵件</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="openTracking">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+
+                                <div style="display: flex; align-items: center; justify-content: space-between;">
+                                    <div>
+                                        <label for="clickTracking" style="display: block; margin-bottom: 0.25rem; font-weight: 600; color: #4a5568;">點擊追蹤</label>
+                                        <p style="margin: 0; font-size: 0.875rem; color: #718096;">追蹤郵件內連結的點擊次數</p>
+                                    </div>
+                                    <label class="switch">
+                                        <input type="checkbox" id="clickTracking">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group" style="margin-top: 2rem; padding-top: 1rem; border-top: 1px solid #e2e8f0;">
+                                <label for="testRecipientEmail">測試郵件收件人</label>
+                                <div style="display: flex; gap: 10px;">
+                                    <input type="email" id="testRecipientEmail" placeholder="輸入測試郵件收件人信箱" style="flex: 1;">
+                                    <button type="button" class="btn btn-primary" id="testEmailBtn" style="white-space: nowrap;">發送測試郵件</button>
+                                </div>
+                                <p class="help-text">若未填寫，將發送至當前管理員信箱</p>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveEmailSettingsBtn">保存設定</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- SMTP 設定 -->
+                    <div class="settings-section" id="smtp">
+                        <div class="section-header">
+                            <h2>SMTP 設定</h2>
+                            <p>配置 SMTP 伺服器設定</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="form-group" style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; padding: 1rem; background-color: #f8fafc; border-radius: 8px;">
+                                <div>
+                                    <label for="smtpEnabled" style="margin-bottom: 0; font-weight: 600;">啟用 SMTP 發信</label>
+                                    <p style="margin: 0.25rem 0 0 0; font-size: 0.85rem; color: #718096;">開啟或關閉系統發送郵件的功能</p>
+                                </div>
+                                <label class="switch">
+                                    <input type="checkbox" id="smtpEnabled">
+                                    <span class="slider"></span>
+                                </label>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="smtpHost">SMTP 主機</label>
+                                <input type="text" id="smtpHost" placeholder="smtp.gmail.com">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="smtpPort">SMTP 埠號</label>
+                                <input type="number" id="smtpPort" placeholder="587">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="smtpSecurity">安全性</label>
+                                <select id="smtpSecurity">
+                                    <option value="tls">TLS</option>
+                                    <option value="ssl">SSL</option>
+                                    <option value="none">無</option>
+                                </select>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="smtpUsername">使用者名稱</label>
+                                <input type="text" id="smtpUsername" placeholder="請輸入 SMTP 使用者名稱">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="smtpPassword">密碼</label>
+                                <input type="password" id="smtpPassword" placeholder="請輸入 SMTP 密碼">
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveSmtpSettingsBtn">保存設定</button>
+                                <button type="button" class="btn btn-primary" id="testSmtpConnectionBtn">測試連線</button>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+                    <!-- 安全設定 -->
+                    <div class="settings-section" id="security">
+                        <div class="section-header">
+                            <h2>安全設定</h2>
+                            <p>配置系統安全相關設定</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label for="sessionTimeout">會話逾時 (分鐘)</label>
+                                <input type="number" id="sessionTimeout" placeholder="30" min="5" max="1440">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxFailedAttempts">最大登入失敗嘗試次數</label>
+                                <input type="number" id="maxFailedAttempts" placeholder="5" min="1" max="20">
+                                <p class="help-text">達到此次數後帳號將被暫時鎖定</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="lockoutDurationMinutes">帳號鎖定時間 (分鐘)</label>
+                                <input type="number" id="lockoutDurationMinutes" placeholder="30" min="1" max="1440">
+                                <p class="help-text">帳號被鎖定後的自動解鎖時間</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="passwordPolicy">密碼政策</label>
+                                <div class="checkbox-group">
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="requireUppercase">
+                                        <span>需要大寫字母</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="requireLowercase">
+                                        <span>需要小寫字母</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="requireNumbers">
+                                        <span>需要數字</span>
+                                    </label>
+                                    <label class="checkbox-item">
+                                        <input type="checkbox" id="requireSpecialChars">
+                                        <span>需要特殊字符</span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="minPasswordLength">最小密碼長度</label>
+                                <input type="number" id="minPasswordLength" placeholder="8" min="6" max="50">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="twoFactorAuth">雙因子驗證</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="twoFactorAuth">
+                                    <label for="twoFactorAuth" class="toggle-label"></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="ipWhitelist">IP 白名單</label>
+                                <textarea id="ipWhitelist" rows="4" placeholder="每行一個 IP 地址或 CIDR 範圍"></textarea>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveSecuritySettingsBtn">保存設定</button>
+                                <button type="button" class="btn btn-secondary" id="resetSecuritySettingsBtn">重置</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 分類管理 -->
+                    <div class="settings-section" id="categories">
+                        <div id="categoryManagementRoot" class="category-management-content">
+                            <div class="loading-state">
+                                <div class="loading-spinner"></div>
+                                <div>正在初始化分類管理模組...</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Delete Category Modal -->
+                    <div class="modal fade" id="deleteCategoryModal" tabindex="-1" aria-labelledby="deleteCategoryModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="deleteCategoryModalLabel">確認刪除</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    您確定要刪除此分類嗎？此操作無法復原。
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <button type="button" class="btn btn-danger" id="confirmDeleteCategoryBtn">刪除</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 通知設定 -->
+                    <div class="settings-section" id="notifications">
+                        <div class="section-header">
+                            <h2>通知設定</h2>
+                            <p>配置系統通知偏好</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="notification-group">
+                                <h3>郵件通知</h3>
+                                <div class="notification-item">
+                                    <span>活動完成通知</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="campaignCompleteNotif">
+                                        <label for="campaignCompleteNotif" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <span>新訂閱者通知</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="newSubscriberNotif">
+                                        <label for="newSubscriberNotif" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <span>系統錯誤通知</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="systemErrorNotif">
+                                        <label for="systemErrorNotif" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="notification-group">
+                                <h3>瀏覽器通知</h3>
+                                <div class="notification-item">
+                                    <span>即時通知</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="browserNotif">
+                                        <label for="browserNotif" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                                <div class="notification-item">
+                                    <span>聲音提醒</span>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="soundNotif">
+                                        <label for="soundNotif" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="notification-group">
+                                <h3>報告通知</h3>
+                                <div class="form-group">
+                                    <label for="reportFrequency">報告頻率</label>
+                                    <select id="reportFrequency">
+                                        <option value="daily">每日</option>
+                                        <option value="weekly">每週</option>
+                                        <option value="monthly">每月</option>
+                                        <option value="never">從不</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="reportEmail">報告接收信箱</label>
+                                    <input type="email" id="reportEmail" placeholder="請輸入接收報告的信箱">
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveNotificationSettingsBtn">保存設定</button>
+                                <button type="button" class="btn btn-primary" id="testNotificationsBtn">測試通知</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 第三方整合 -->
+                    <div class="settings-section" id="integrations">
+                        <div class="section-header">
+                            <h2>第三方整合</h2>
+                            <p>配置與第三方服務的整合</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="integration-group">
+                                <h3>Google Analytics</h3>
+                                <div class="form-group">
+                                    <label for="gaTrackingId">追蹤 ID</label>
+                                    <input type="text" id="gaTrackingId" placeholder="GA-XXXXXXXXX-X">
+                                </div>
+                                <div class="form-group">
+                                    <label for="gaEnabled">啟用 Google Analytics</label>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="gaEnabled">
+                                        <label for="gaEnabled" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="integration-group">
+                                <h3>Facebook Pixel</h3>
+                                <div class="form-group">
+                                    <label for="fbPixelId">Pixel ID</label>
+                                    <input type="text" id="fbPixelId" placeholder="請輸入 Facebook Pixel ID">
+                                </div>
+                                <div class="form-group">
+                                    <label for="fbPixelEnabled">啟用 Facebook Pixel</label>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="fbPixelEnabled">
+                                        <label for="fbPixelEnabled" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="integration-group">
+                                <h3>Webhook</h3>
+                                <div class="form-group">
+                                    <label for="webhookUrl">Webhook URL</label>
+                                    <input type="url" id="webhookUrl" placeholder="https://example.com/webhook">
+                                </div>
+                                <div class="form-group">
+                                    <label for="webhookSecret">密鑰</label>
+                                    <input type="password" id="webhookSecret" placeholder="請輸入 Webhook 密鑰">
+                                </div>
+                                <div class="form-group">
+                                    <label for="webhookEvents">觸發事件</label>
+                                    <div class="checkbox-group">
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" id="webhookCampaignSent">
+                                            <span>活動發送完成</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" id="webhookSubscriberAdded">
+                                            <span>新增訂閱者</span>
+                                        </label>
+                                        <label class="checkbox-item">
+                                            <input type="checkbox" id="webhookUnsubscribe">
+                                            <span>取消訂閱</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveIntegrationSettingsBtn">保存設定</button>
+                                <button type="button" class="btn btn-primary" id="testWebhookBtn">測試 Webhook</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 備份與還原 -->
+                    <div class="settings-section" id="backup">
+                        <div class="section-header">
+                            <h2>備份與還原</h2>
+                            <p>管理系統資料的備份與還原</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="backup-group">
+                                <h3>自動備份</h3>
+                                <div class="form-group">
+                                    <label for="autoBackupEnabled">啟用自動備份</label>
+                                    <div class="toggle-switch">
+                                        <input type="checkbox" id="autoBackupEnabled">
+                                        <label for="autoBackupEnabled" class="toggle-label"></label>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label for="backupFrequency">備份頻率</label>
+                                    <select id="backupFrequency">
+                                        <option value="daily">每日</option>
+                                        <option value="weekly">每週</option>
+                                        <option value="monthly">每月</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label for="backupRetention">保留天數</label>
+                                    <input type="number" id="backupRetention" placeholder="30" min="1" max="365">
+                                </div>
+                            </div>
+
+                            <div class="backup-group">
+                                <h3>手動備份</h3>
+                                <div class="backup-actions">
+                                    <button type="button" class="btn btn-primary" id="createBackupBtn">立即備份</button>
+                                    <button type="button" class="btn btn-secondary" id="downloadBackupBtn">下載備份</button>
+                                </div>
+                            </div>
+
+                            <div class="backup-group">
+                                <h3>還原資料</h3>
+                                <div class="form-group">
+                                    <label for="restoreFile">選擇備份檔案</label>
+                                    <input type="file" id="restoreFile" accept=".zip,.sql">
+                                </div>
+                                <div class="backup-actions">
+                                    <button type="button" class="btn btn-danger" id="restoreBackupBtn">還原資料</button>
+                                </div>
+                            </div>
+
+                            <div class="backup-list">
+                                <h3>備份歷史</h3>
+                                <div id="backupHistory">
+                                    <!-- 備份歷史將由 JavaScript 動態載入 -->
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 憑證管理 -->
+                    <div class="settings-section" id="certificates">
+                        <div class="section-header">
+                            <h2>憑證管理</h2>
+                            <p>管理 HTTPS 憑證與 SMTP CA</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <!-- 上傳新憑證 -->
+                            <div class="group-box" style="background: #f8f9fa; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <h3>上傳新憑證</h3>
+                                <div class="form-group">
+                                    <label>憑證檔案 (.crt/.cer 或 .pfx)</label>
+                                    <div class="file-input-group">
+                                        <input type="file" id="certFile" accept=".crt,.cer,.pfx" class="form-control">
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>私鑰檔案 (.key)</label>
+                                    <div class="file-input-group">
+                                        <input type="file" id="keyFile" accept=".key" class="form-control">
+                                    </div>
+                                    <small style="color: #666;">如果是 .pfx 檔案則不需要上傳私鑰</small>
+                                </div>
+                                <div class="form-group" id="pfxPasswordGroup" style="display: none;">
+                                    <label>憑證密碼 (PFX/P12)</label>
+                                    <input type="password" id="pfxPassword" class="form-control" placeholder="如果憑證有密碼保護，請輸入">
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="uploadCertificateBtn">上傳</button>
+                                </div>
+                            </div>
+
+                            <!-- 現有憑證 -->
+                            <div class="group-box" style="background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <h3>現有憑證</h3>
+                                <div class="table-responsive">
+                                    <table class="data-table" id="certTable" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>通用名稱</th>
+                                                <th>頒發者</th>
+                                                <th>有效期限</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="certTableBody">
+                                            <!-- 動態載入 -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- SMTP 企業 CA 憑證 -->
+                            <div class="group-box" style="background: #f8f9fa; padding: 20px; border-radius: 8px;">
+                                <h3>SMTP 企業 CA 憑證 (PEM)</h3>
+                                <div class="form-group">
+                                    <label>選擇檔案</label>
+                                    <div class="file-input-group" style="display: flex; gap: 10px;">
+                                        <input type="file" id="caFile" accept=".pem,.crt,.cer" class="form-control">
+                                        <button type="button" class="btn btn-outline" id="clearCAContentBtn">清除</button>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label>CA 內容 (PEM)</label>
+                                    <textarea id="caContent" rows="5" readonly class="code-font form-control" style="font-family: monospace;"></textarea>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveCABtn">儲存企業 CA</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 工作流程設定 -->
+                    <div class="settings-section" id="workflow">
+                        <div class="section-header">
+                            <h2>工作流程設定</h2>
+                            <p>配置審核流程與相關規則</p>
+                        </div>
+
+                        <div class="workflow-tabs">
+                            <button class="tab-btn active" data-tab="general-settings">一般設定</button>
+                            <button class="tab-btn" data-tab="workflow-definitions">審核流程定義</button>
+                        </div>
+
+                        <div class="tab-content">
+                            <!-- 一般設定 -->
+                            <div class="tab-pane active" id="general-settings">
+                                <div class="workflow-settings">
+                                    <div class="settings-section-inner">
+                                        <h4 style="margin-bottom: 15px; color: #333;">審核規則</h4>
+                                        <div class="form-group">
+                                            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <input type="checkbox" id="autoAssignReviewer">
+                                                <span>自動分配審核者</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <input type="checkbox" id="requireMultipleApprovals">
+                                                <span>需要多人審核</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="approvalTimeout">審核超時時間（小時）：</label>
+                                            <input type="number" id="approvalTimeout" value="24" min="1" max="168" class="form-control">
+                                        </div>
+                                    </div>
+
+                                    <div class="settings-section-inner" style="margin-top: 30px;">
+                                        <h4 style="margin-bottom: 15px; color: #333;">通知設定</h4>
+                                        <div class="form-group">
+                                            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <input type="checkbox" id="emailNotifications">
+                                                <span>啟用郵件通知</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <input type="checkbox" id="slackNotifications">
+                                                <span>啟用 Slack 通知</span>
+                                            </label>
+                                        </div>
+                                        <div class="form-group">
+                                            <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px;">
+                                                <input type="checkbox" id="reminderNotifications">
+                                                <span>啟用逾時提醒</span>
+                                            </label>
+                                        </div>
+                                    </div>
+
+                                    <div class="settings-section-inner" style="margin-top: 30px;">
+                                        <div class="d-flex justify-content-between align-items-center mb-3" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                            <h4 style="margin: 0; color: #333;">審核者管理</h4>
+                                            <button class="btn btn-primary btn-sm" id="addReviewerBtn">
+                                                <i class="fas fa-plus"></i> 添加審核者
+                                            </button>
+                                        </div>
+                                        <div class="reviewers-list" id="reviewersList" style="border: 1px solid #ddd; border-radius: 4px; padding: 15px; min-height: 100px;">
+                                            <!-- 審核者列表將在這裡顯示 -->
+                                            <div class="loading-spinner">載入中...</div>
+                                        </div>
+                                    </div>
+                                    
+                                    <div class="form-actions" style="margin-top: 30px;">
+                                        <button class="btn btn-primary" id="saveWorkflowSettingsBtn">保存一般設定</button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- 審核流程定義 -->
+                            <div class="tab-pane" id="workflow-definitions" style="display: none;">
+                                <div class="workflows-list-container" id="workflowsListContainer">
+                                    <div class="toolbar mb-3" style="margin-bottom: 15px; text-align: right;">
+                                        <button class="btn btn-primary" id="createWorkflowBtn">
+                                            <i class="fas fa-plus"></i> 新增流程
+                                        </button>
+                                    </div>
+                                    <div class="table-responsive">
+                                        <table class="data-table" style="width: 100%;">
+                                            <thead>
+                                                <tr>
+                                                    <th>流程名稱</th>
+                                                    <th>描述</th>
+                                                    <th>步驟數</th>
+                                                    <th>狀態</th>
+                                                    <th>操作</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody id="workflowsListBody">
+                                                <!-- 流程列表將在這裡顯示 -->
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+
+                                <!-- 流程編輯器 (預設隱藏) -->
+                                <div class="workflow-editor" id="workflowEditor" style="display: none;">
+                                    <div class="editor-header mb-3" style="margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                                        <h4 id="workflowEditorTitle" style="margin: 0;">新增工作流程</h4>
+                                        <button class="btn btn-secondary btn-sm" id="cancelEditWorkflowBtn">返回列表</button>
+                                    </div>
+                                    <form id="workflowDefinitionForm">
+                                        <div class="form-group">
+                                            <label for="workflowName">流程名稱 *</label>
+                                            <input type="text" id="workflowName" class="form-control" required placeholder="例如：一般行銷活動審核">
+                                        </div>
+                                        <div class="form-group">
+                                            <label for="workflowDescription">描述</label>
+                                            <textarea id="workflowDescription" class="form-control" rows="2" placeholder="說明此流程的用途..."></textarea>
+                                        </div>
+
+                                        <div class="workflow-steps-editor mt-4" style="margin-top: 25px;">
+                                            <h5 style="margin-bottom: 10px;">審核步驟</h5>
+                                            <div class="table-responsive">
+                                                <table class="data-table" style="width: 100%;">
+                                                    <thead>
+                                                        <tr>
+                                                            <th style="width: 50px;">#</th>
+                                                            <th>步驟名稱</th>
+                                                            <th>審核類型</th>
+                                                            <th>指定對象</th>
+                                                            <th style="width: 80px;">必填</th>
+                                                            <th style="width: 60px;">操作</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody id="workflowStepsBody">
+                                                        <!-- 步驟行將在這裡生成 -->
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                            <div class="mt-2" style="margin-top: 10px;">
+                                                <button type="button" class="btn btn-secondary btn-sm" id="addStepBtn">
+                                                    <i class="fas fa-plus"></i> 新增步驟
+                                                </button>
+                                            </div>
+                                        </div>
+
+                                        <div class="form-actions mt-4" style="margin-top: 25px;">
+                                            <button type="button" class="btn btn-primary" id="saveWorkflowDefinitionBtn">保存流程定義</button>
+                                        </div>
+                                    </form>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 流量控制 -->
+                    <div class="settings-section" id="traffic-control">
+                        <div class="section-header">
+                            <h2>流量控制</h2>
+                            <p>管理 IP 暖身、網域速率限制與系統快取</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <!-- IP 暖身設定 -->
+                            <div class="group-box" style="background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <h3>IP 暖身設定</h3>
+                                <div class="form-group" style="display: flex; align-items: center; justify-content: space-between;">
+                                    <label for="warmupActive" style="margin:0;">啟用暖身模式</label>
+                                    <label class="switch">
+                                        <input type="checkbox" id="warmupActive">
+                                        <span class="slider"></span>
+                                    </label>
+                                </div>
+                                <div class="form-group">
+                                    <label for="warmupStartDate">開始日期</label>
+                                    <input type="date" id="warmupStartDate" class="form-control">
+                                </div>
+                                <div class="form-group">
+                                    <label for="warmupDailyLimit">初始每日限制</label>
+                                    <input type="number" id="warmupDailyLimit" class="form-control" placeholder="1000">
+                                </div>
+                                <div class="form-group">
+                                    <label for="warmupMultiplier">每日增長倍率</label>
+                                    <input type="number" id="warmupMultiplier" class="form-control" step="0.1" placeholder="1.5">
+                                    <small class="text-muted">例如 1.5 表示每天增加 50% 發送量</small>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveWarmupSettingsBtn">保存暖身設定</button>
+                                </div>
+                            </div>
+
+                            <!-- 網域速率限制 -->
+                            <div class="group-box" style="background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px; margin-bottom: 20px;">
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                                    <h3>網域速率限制</h3>
+                                    <button class="btn btn-primary btn-sm" id="addDomainRuleBtn">
+                                        <i class="fas fa-plus"></i> 新增規則
+                                    </button>
+                                </div>
+                                <div class="table-responsive">
+                                    <table class="data-table" id="domainRulesTable" style="width: 100%;">
+                                        <thead>
+                                            <tr>
+                                                <th>網域</th>
+                                                <th>每分鐘限制</th>
+                                                <th>每小時限制</th>
+                                                <th>操作</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <!-- Dynamic -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+
+                            <!-- 系統效能 (快取) -->
+                            <div class="group-box" style="background: #fff; border: 1px solid #ddd; padding: 20px; border-radius: 8px;">
+                                <h3>系統效能</h3>
+                                <div class="form-group">
+                                    <label for="trafficCacheTimeout">快取存活時間 (秒)</label>
+                                    <input type="number" id="trafficCacheTimeout" class="form-control" placeholder="60">
+                                    <small class="text-muted">設定流量控制規則的快取時間 (預設 60 秒)</small>
+                                </div>
+                                <div class="form-actions">
+                                    <button type="button" class="btn btn-primary" id="saveCacheSettingsBtn">保存效能設定</button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 頻率控管設定 -->
+                <div class="settings-section" id="frequency-capping">
+                    <div class="section-header">
+                        <h2>頻率控管設定 (Frequency Capping)</h2>
+                        <p>設定全域的郵件發送頻率限制，防止受眾疲勞。</p>
+                    </div>
+
+                    <div class="settings-form">
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="fcEnabled">
+                                啟用頻率控管
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fcMaxEmails">每位受眾發送上限次數</label>
+                            <input type="number" id="fcMaxEmails" min="1" placeholder="例如：4">
+                            <small class="form-text">在指定天數內，每位受眾最多接收的郵件數量。</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fcPeriodDays">計算週期 (天)</label>
+                            <input type="number" id="fcPeriodDays" min="1" placeholder="例如：30">
+                            <small class="form-text">計算發送次數的時間範圍。</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="checkbox-label">
+                                <input type="checkbox" id="fcExcludeTestEmails" checked>
+                                排除郵件 (不計入發送次數)
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fcExcludedDomains">排除特定網域 (每行一個)</label>
+                            <textarea id="fcExcludedDomains" class="form-control" rows="3" placeholder="例如：
+example.com
+test.org"></textarea>
+                            <small class="form-text">發送給這些網域的郵件將不計入頻率限制。</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fcExcludedEmails">排除特定Email (每行一個)</label>
+                            <textarea id="fcExcludedEmails" class="form-control" rows="3" placeholder="例如：
+user@example.com
+admin@test.org"></textarea>
+                            <small class="form-text">發送給這些Email的郵件將不計入頻率限制。</small>
+                        </div>
+
+                        <div class="form-group">
+                            <label for="fcExcludedTags">排除特定標籤 (每行一個)</label>
+                            <textarea id="fcExcludedTags" class="form-control" rows="3" placeholder="例如：
+internal_test
+vip_user"></textarea>
+                            <small class="form-text">擁有這些標籤的訂閱者將不計入頻率限制。</small>
+                        </div>
+
+                        <div class="form-actions">
+                            <button class="btn btn-primary" id="saveFrequencySettingsBtn">儲存設定</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 進階設定 -->
+                <div class="settings-section" id="advanced">
+                        <div class="section-header">
+                            <h2>進階設定</h2>
+                            <p>系統進階配置選項</p>
+                        </div>
+
+                        <div class="settings-form">
+                            <div class="form-group">
+                                <label for="debugMode">除錯模式</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="debugMode">
+                                    <label for="debugMode" class="toggle-label"></label>
+                                </div>
+                                <small>啟用後將記錄詳細的系統日誌</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cacheEnabled">啟用快取</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="cacheEnabled">
+                                    <label for="cacheEnabled" class="toggle-label"></label>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="cacheTimeout">快取逾時 (秒)</label>
+                                <input type="number" id="cacheTimeout" placeholder="3600" min="60">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maxEmailsPerHour">每小時最大郵件數</label>
+                                <input type="number" id="maxEmailsPerHour" placeholder="1000" min="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="apiRateLimit">API 速率限制 (每分鐘)</label>
+                                <input type="number" id="apiRateLimit" placeholder="100" min="1">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="maintenanceMode">維護模式</label>
+                                <div class="toggle-switch">
+                                    <input type="checkbox" id="maintenanceMode">
+                                    <label for="maintenanceMode" class="toggle-label"></label>
+                                </div>
+                                <small>啟用後將顯示維護頁面給訪客</small>
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-primary" id="saveAdvancedSettingsBtn">保存設定</button>
+                                <button type="button" class="btn btn-secondary" id="clearCacheBtn">清除快取</button>
+                                <button type="button" class="btn btn-danger" id="resetAllSettingsBtn">重置所有設定</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+
+
+    <!-- 確認對話框 -->
+    <div class="modal-overlay" id="confirmModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirmTitle">確認操作</h3>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmMessage">您確定要執行此操作嗎？</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeConfirmModalBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="confirmBtn">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 載入中指示器 -->
+    <div class="loading-overlay" id="loadingOverlay" style="display: none;">
+        <div class="loading-spinner"></div>
+        <p>處理中...</p>
+    </div>
+
+    <!-- 新增/編輯分類模態框 -->
+    <div class="modal-overlay" id="categoryModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="categoryModalTitle">新增分類</h3>
+                <button class="modal-close" id="closeCategoryModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="categoryForm">
+                    <input type="hidden" id="categoryId" name="categoryId">
+                    <div class="form-group">
+                        <label for="categoryName">分類名稱 *</label>
+                        <input type="text" id="categoryName" name="categoryName" required placeholder="請輸入分類名稱">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryType">分類類型 *</label>
+                        <select id="categoryType" name="categoryType" required>
+                            <option value="identity">身份</option>
+                            <option value="unit">單位</option>
+                            <option value="region">區域</option>
+                            <option value="department">部門</option>
+                            <option value="contract">合約</option>
+                            <option value="product">產品</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryParent">上層分類</label>
+                        <select id="categoryParent" name="categoryParent">
+                            <option value="">無 (頂層分類)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryOrder">排序順序</label>
+                        <input type="number" id="categoryOrder" name="categoryOrder" placeholder="0" min="0">
+                    </div>
+                    <div class="form-group">
+                        <label for="categoryDescription">描述</label>
+                        <textarea id="categoryDescription" name="categoryDescription" placeholder="請輸入分類描述（選填）"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label class="checkbox-item">
+                            <input type="checkbox" id="categoryActive" name="categoryActive" checked>
+                            <span>啟用此分類</span>
+                        </label>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelCategoryModalBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="saveCategoryFormBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 匯入分類模態框 -->
+    <div class="modal-overlay" id="importCategoryModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>匯入分類</h3>
+                <button class="modal-close" id="closeImportModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="import-options">
+                    <div class="import-option">
+                        <h4>從 CSV 檔案匯入</h4>
+                        <input type="file" id="csvFile" accept=".csv">
+                        <small>CSV 格式：名稱,類型,上層分類,排序,描述</small>
+                    </div>
+                    <div class="import-option">
+                        <h4>從舊系統匯入</h4>
+                        <select id="oldSystemTable">
+                            <option value="">選擇舊資料表</option>
+                            <option value="epaper_member_t1">epaper_member_t1</option>
+                            <option value="epaper_member_t2">epaper_member_t2</option>
+                            <option value="epaper_member_t3">epaper_member_t3</option>
+                            <option value="epaper_member_t4">epaper_member_t4</option>
+                            <option value="epaper_member_t5">epaper_member_t5</option>
+                            <option value="epaper_member_t6">epaper_member_t6</option>
+                        </select>
+                        <button type="button" class="btn btn-secondary" id="startImportBtn">開始匯入</button>
+                    </div>
+                </div>
+                <div id="importPreview" style="display: none;">
+                    <h4>匯入預覽</h4>
+                    <div id="importPreviewContent"></div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelImportBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="confirmImportBtn" style="display: none;">確認匯入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加審核者模態框 -->
+    <div class="modal-overlay" id="addReviewerModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>添加審核者</h3>
+                <button class="modal-close" id="closeAddReviewerModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label>搜尋用戶 (名稱、Email 或 ID)</label>
+                    <div class="search-box-container" style="display: flex; gap: 10px;">
+                        <input type="text" id="userSearchInput" class="form-control" placeholder="輸入關鍵字搜尋...">
+                        <button class="btn btn-primary" id="userSearchBtn">搜尋</button>
+                    </div>
+                </div>
+                <div class="user-search-results" id="userSearchResults" style="max-height: 300px; overflow-y: auto; margin-top: 15px;">
+                    <!-- 搜尋結果將在這裡顯示 -->
+                    <div class="text-center text-muted" style="padding: 20px;">請輸入關鍵字進行搜尋</div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelAddReviewerModalBtn">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 網域規則模態框 -->
+    <div class="modal-overlay" id="domainRuleModal" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>網域速率規則</h3>
+                <button class="modal-close" id="closeDomainRuleModalBtn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="domainRuleForm">
+                    <div class="form-group">
+                        <label for="ruleDomain">網域 *</label>
+                        <input type="text" id="ruleDomain" required placeholder="例如: gmail.com">
+                    </div>
+                    <div class="form-group">
+                        <label for="ruleMaxPerMinute">每分鐘限制 *</label>
+                        <input type="number" id="ruleMaxPerMinute" required min="1" placeholder="60">
+                    </div>
+                    <div class="form-group">
+                        <label for="ruleMaxPerHour">每小時限制 *</label>
+                        <input type="number" id="ruleMaxPerHour" required min="1" placeholder="3600">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelDomainRuleModalBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="saveDomainRuleBtn">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/dev-config.js?v=3"></script>
+    <script src="js/utils.js?v=3"></script>
+    <script src="js/state-manager.js?v=3"></script>
+    <script src="js/components.js?v=3"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/admin-auth.js?v=3"></script>
+    <script src="js/admin-auth-guard.js?v=3"></script>
+    <!-- <script src="js/userService.js?v=3"></script> -->
+    <script src="js/main.js?v=3"></script>
+    <script src="js/settings.js?v=4"></script>
+    <script src="js/traffic-control-settings.js?v=2"></script>
+    <script src="js/category-management.js?v=4"></script>
+</body>
+</html>

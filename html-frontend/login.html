@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>登入 - WintonEDM 電子報管理系統</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <!-- Logo 和標題 -->
+            <div class="login-header">
+                <div class="logo" style="background: transparent; box-shadow: none;">
+                    <img src="/uploads/logos/logo-1767066330043-367809270.jpg" alt="WintonEDM Logo" style="width: 100%; height: auto; object-fit: contain;">
+                </div>
+                <h1 class="login-title">WintonEDM</h1>
+                <p class="login-subtitle">電子報管理系統</p>
+            </div>
+
+            <!-- 登入表單 -->
+            <form id="loginForm" class="login-form">
+                <div class="form-group">
+                    <label for="username" class="form-label">
+                        <i class="fas fa-user"></i>
+                        用戶名
+                    </label>
+                    <input 
+                        type="text" 
+                        id="username" 
+                        name="username" 
+                        class="form-input" 
+                        placeholder="請輸入您的用戶名"
+                        required
+                        autocomplete="off"
+                        spellcheck="false"
+                        autocapitalize="off"
+                        autocorrect="off"
+                    >
+                    <div class="input-error" id="usernameError"></div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password" class="form-label">
+                        <i class="fas fa-lock"></i>
+                        密碼
+                    </label>
+                    <div class="password-input-container">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-input" 
+                            placeholder="請輸入您的密碼"
+                            required
+                            autocomplete="off"
+                            spellcheck="false"
+                            autocapitalize="off"
+                            autocorrect="off"
+                        >
+                        <button type="button" class="password-toggle" id="passwordToggle">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <div class="input-error" id="passwordError"></div>
+                </div>
+
+                <div class="form-options">
+                    <label class="checkbox-container">
+                        <input type="checkbox" id="rememberMe" name="rememberMe">
+                        <span class="checkmark"></span>
+                        記住我
+                    </label>
+                    <a href="forgot-password.html" class="forgot-password">忘記密碼？</a>
+                </div>
+
+                <button type="submit" class="login-btn" id="loginBtn">
+                    <span class="btn-text">登入</span>
+                    <div class="btn-loading" style="display: none;">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        登入中...
+                    </div>
+                </button>
+
+                <div class="login-error" id="loginError" style="display: none;"></div>
+            </form>
+
+            <!-- 系統資訊 -->
+            <div class="login-footer">
+                <p class="system-info">
+                    <i class="fas fa-shield-alt"></i>
+                    管理員登入系統
+                </p>
+                <div class="role-info">
+                    <small>
+                        支援角色：管理員、管理者、編輯者
+                    </small>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- 背景裝飾 -->
+        <div class="login-bg">
+            <div class="bg-shape shape-1"></div>
+            <div class="bg-shape shape-2"></div>
+            <div class="bg-shape shape-3"></div>
+        </div>
+    </div>
+
+    <!-- JavaScript -->
+    <script>
+        // 內聯簡化的AdminAuth服務
+        class AdminAuthService {
+            constructor() {
+                // 動態決定後端 API URL
+                const hostname = window.location.hostname;
+                const protocol = window.location.protocol;
+                const port = window.location.port;
+                
+                // 如果是在 HTTPS 上運行，且端口是 3443 (後端 HTTPS 端口)，則使用相對路徑
+                if (port === '3443' || (protocol === 'https:' && !port)) {
+                     this.baseURL = '/api/admin-auth';
+                     console.log('Using relative API path for HTTPS backend:', this.baseURL);
+                } else {
+                     // 否則保持原有的開發模式行為
+                     const apiHost = hostname === '127.0.0.1' ? 'localhost' : hostname;
+                     this.baseURL = `http://${apiHost}:3001/api/admin-auth`; 
+                     console.log('Using absolute API path:', this.baseURL);
+                }
+
+                this.tokenKey = 'adminAuthToken';
+                this.userKey = 'adminUser';
+                this.timeout = 10000;
+            }
+
+            getToken() {
+                return localStorage.getItem(this.tokenKey);
+            }
+
+            getUser() {
+                const userStr = localStorage.getItem(this.userKey);
+                return userStr ? JSON.parse(userStr) : null;
+            }
+
+            setToken(token) {
+                localStorage.setItem(this.tokenKey, token);
+            }
+
+            setUser(user) {
+                localStorage.setItem(this.userKey, JSON.stringify(user));
+            }
+
+            clearAuth() {
+                localStorage.removeItem(this.tokenKey);
+                localStorage.removeItem(this.userKey);
+            }
+
+            isValidToken(token) {
+                try {
+                    const base64Url = token.split('.')[1];
+                    const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                    const jsonPayload = decodeURIComponent(atob(base64).split('').map(function(c) {
+                        return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+                    }).join(''));
+                    const payload = JSON.parse(jsonPayload);
+                    const currentTime = Date.now() / 1000;
+                    return payload.exp > currentTime;
+                } catch (error) {
+                    console.error('Token validation error:', error);
+                    return false;
+                }
+            }
+
+            isAuthenticated() {
+                // 與前端共用的管理員認證邏輯一致：必須同時存在 token 與 user 且 token 有效
+                const token = this.getToken();
+                return !!(token && this.getUser() && this.isValidToken(token));
+            }
+
+            async login(username, password) {
+                try {
+                    const response = await fetch(`${this.baseURL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }),
+                        signal: AbortSignal.timeout(this.timeout)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || '登入失敗');
+                    }
+
+                    this.setToken(data.token);
+                    this.setUser(data.user);
+
+                    return data;
+                } catch (error) {
+                    console.error('登入錯誤:', error);
+                    throw error;
+                }
+            }
+        }
+
+        // 創建全域實例
+        window.adminAuth = new AdminAuthService();
+        console.log('AdminAuth service loaded:', !!window.adminAuth);
+    </script>
+    <!-- <script src="js/admin-auth.js"></script> -->
+    <!-- <script src="js/admin-auth-guard.js"></script> -->
+    <script src="js/login.js"></script>
+    <script>
+        // 確保adminAuth可用的檢查
+        window.addEventListener('load', function() {
+            console.log('Window loaded, adminAuth available:', !!window.adminAuth);
+            if (!window.adminAuth) {
+                console.error('AdminAuth not loaded!');
+            }
+        });
+    </script>
+</body>
+</html>

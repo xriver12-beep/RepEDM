@@ -1,0 +1,4 @@
+name,categoryType,hierarchyType,description,sortOrder
+測試分類1,identity,identity,第一個測試分類,1
+測試分類2,identity,identity,第二個測試分類,2
+測試分類3,contract,contract,合約相關分類,3

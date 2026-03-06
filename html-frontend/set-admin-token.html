@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>設置管理員令牌</title>
+</head>
+<body>
+    <h1>設置管理員認證令牌</h1>
+    <button id="setTokenBtn">設置管理員令牌</button>
+    <div id="status"></div>
+
+    <script>
+        document.getElementById('setTokenBtn').addEventListener('click', async function() {
+            const statusDiv = document.getElementById('status');
+            
+            try {
+                // 使用最新獲取的管理員令牌
+                const adminToken = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJhZG1pblVzZXJJRCI6IjA3RjNCMzg1LTc4MjEtNEUwNC1CQTMyLTY2RUE4M0ZFQTFEMyIsInVzZXJuYW1lIjoiYWRtaW4iLCJlbWFpbCI6ImFkbWluQHdpbnRvbmVkbS5jb20iLCJyb2xlIjoiQWRtaW4iLCJkaXNwbGF5TmFtZSI6Iuezu-e1seeuoeeQhuWToSIsImlhdCI6MTc2MTQzOTY0MSwiZXhwIjoxNzYxNTI2MDQxfQ.whjHz1m9pzfjDWtgTXcTRZB2bYIOTlYjPT7nLcypLYE';
+                const adminUser = {
+                    id: 1,
+                    username: 'admin',
+                    email: 'admin@example.com',
+                    role: 'admin',
+                    is_active: true
+                };
+
+                // 設置到 localStorage
+                localStorage.setItem('adminAuthToken', adminToken);
+                localStorage.setItem('adminUser', JSON.stringify(adminUser));
+                
+                statusDiv.innerHTML = '<p style="color: green;">管理員令牌設置成功！</p>';
+                
+                // 2秒後跳轉到訂閱者頁面
+                setTimeout(() => {
+                    window.location.href = 'subscribers.html';
+                }, 2000);
+                
+            } catch (error) {
+                statusDiv.innerHTML = '<p style="color: red;">設置失敗: ' + error.message + '</p>';
+            }
+        });
+    </script>
+</body>
+</html>

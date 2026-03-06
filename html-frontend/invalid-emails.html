@@ -1,0 +1,297 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>無效信箱查詢 - 電子報管理系統</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/subscribers.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 側邊欄 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">電子報前台系統</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="user-dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="subscribers.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">訂閱者管理</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="invalid-emails.html" class="menu-link">
+                    <span class="menu-icon">⚠️</span>
+                    <span class="menu-text">無效信箱查詢</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="campaigns.html" class="menu-link">
+                    <span class="menu-icon">📧</span>
+                    <span class="menu-text">活動製作</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="templates.html" class="menu-link">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">EDM管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="assets.html" class="menu-link">
+                    <span class="menu-icon">🖼️</span>
+                    <span class="menu-text">素材管理</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager,Approver">
+                <a href="approvals.html" class="menu-link">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-text">送審作業</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 主要內容區域 -->
+    <main class="main-content" id="mainContent">
+        <!-- 頂部導航 -->
+        <header class="top-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="page-title">無效信箱查詢</h1>
+            <div class="header-actions">
+                <button class="btn btn-primary" id="checkBounceBtn" style="margin-right: 10px;">
+                    <i class="fas fa-sync-alt"></i>
+                    立即檢查
+                </button>
+                <button class="btn btn-secondary" id="exportInvalidBtn">
+                    <i class="fas fa-file-export"></i>
+                    匯出清單
+                </button>
+                <button class="btn btn-secondary" id="importInvalidBtn" style="margin-left: 10px;">
+                    <i class="fas fa-file-import"></i>
+                    匯入無效名單
+                </button>
+                <button class="btn btn-secondary" id="importUnsubscribeBtn" style="margin-left: 10px;">
+                    <i class="fas fa-file-import"></i>
+                    匯入取消訂閱
+                </button>
+                <button class="btn btn-secondary" id="unsubscribeManagerBtn" style="margin-left: 10px; display: none;">
+                    <i class="fas fa-envelope-open-text"></i>
+                    退訂信箱管理
+                </button>
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <span class="user-avatar">👤</span>
+                        <div class="user-info">
+                            <span class="user-name">載入中...</span>
+                            <span class="user-role">使用者</span>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-avatar-large">👤</div>
+                            <div class="user-details">
+                                <div class="user-name-large">載入中...</div>
+                                <div class="user-email">-</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="user-profile.html" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            個人資料
+                        </a>
+                        <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                            <span class="dropdown-icon">🚪</span>
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 頁面內容 -->
+        <div class="page-content">
+            <!-- 統計概覽 -->
+            <div class="stats-overview" id="statsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                <div class="stat-card" id="card-invalid" style="background: #fff5f5; border-left: 4px solid #dc3545; cursor: pointer; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s;" onclick="window.switchStatus('invalid')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="stat-icon" style="color: #dc3545; font-size: 2em; margin-right: 15px;">⚠️</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="invalidCount" style="font-size: 1.8em; font-weight: bold; color: #333;">--</div>
+                            <div class="stat-label" style="color: #666;">無效信箱總數</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card" id="card-unsubscribed" style="background: #f8f9fa; border-left: 4px solid #6c757d; cursor: pointer; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); transition: transform 0.2s;" onclick="window.switchStatus('unsubscribed')">
+                    <div style="display: flex; align-items: center;">
+                        <div class="stat-icon" style="color: #6c757d; font-size: 2em; margin-right: 15px;">🔕</div>
+                        <div class="stat-content">
+                            <div class="stat-number" id="unsubscribedCount" style="font-size: 1.8em; font-weight: bold; color: #333;">--</div>
+                            <div class="stat-label" style="color: #666;">已取消訂閱總數</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="stat-card" style="background: #fff; border-left: 4px solid #17a2b8; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);">
+                    <div class="stat-content">
+                        <div class="stat-text" style="color: #666; font-size: 0.9em; line-height: 1.5;">
+                            此頁面管理所有無法寄送的信箱名單。<br>
+                            <strong>無效信箱：</strong>因退信或錯誤而被系統自動標記。<br>
+                            <strong>已取消訂閱：</strong>用戶主動取消或經由退訂信箱偵測。
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 列表區域 -->
+            <div class="management-container">
+                <div class="subscribers-main" style="width: 100%;">
+                    
+                    <!-- 分頁籤 -->
+                    <div class="status-tabs" style="display: flex; border-bottom: 1px solid #dee2e6; margin-bottom: 20px;">
+                        <button class="status-tab active" data-status="invalid" style="padding: 10px 20px; border: none; background: none; border-bottom: 3px solid #dc3545; color: #dc3545; font-weight: bold; cursor: pointer; font-size: 1.1em; margin-right: 10px;">
+                            無效信箱
+                        </button>
+                        <button class="status-tab" data-status="unsubscribed" style="padding: 10px 20px; border: none; background: none; border-bottom: 3px solid transparent; color: #6c757d; font-weight: bold; cursor: pointer; font-size: 1.1em;">
+                            已取消訂閱
+                        </button>
+                    </div>
+
+                    <div class="table-toolbar">
+                        <div class="search-section">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="搜尋 Email、姓名、公司名稱..." class="search-input">
+                                <button type="button" id="clearSearchBtn" class="clear-search-btn" style="display: none;" title="清除搜尋">
+                                    <i class="fas fa-times-circle"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 列表視圖 -->
+                    <div class="invalid-emails-list" id="invalidEmailsList">
+                        <!-- 表格將由 DataTable 動態生成 -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Import Modal -->
+    <div class="modal" id="importModal" style="z-index: 9999; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog" style="max-width: 600px; margin: 2rem auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">匯入無效信箱</h3>
+                    <button class="close-btn" onclick="document.getElementById('importModal').classList.remove('show'); document.getElementById('importModal').style.display='none';" style="border: none; background: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group" style="margin-bottom: 15px;">
+                        <label for="importCampaignId" style="display: block; margin-bottom: 5px; font-weight: bold;">指定活動 (選填):</label>
+                        <select id="importCampaignId" class="form-control" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="">自動判斷 (最近一次發送)</option>
+                        </select>
+                        <small style="color: #666; margin-top: 5px; display: block;">若指定活動，退信將計入該活動的失敗數；若不指定，則計入該信箱最近收到的一次活動。</small>
+                    </div>
+                    <p style="margin-bottom: 10px;">請輸入要標記為無效的 Email (每行一個或用逗號分隔):</p>
+                    <textarea id="importEmailText" rows="10" class="form-control" style="width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; resize: vertical;"></textarea>
+                    <div class="file-upload-section" style="margin-top: 15px; padding: 15px; background: #f9f9f9; border-radius: 4px;">
+                        <label style="display: block; margin-bottom: 5px; font-weight: bold;">或上傳檔案 (CSV/TXT):</label>
+                        <input type="file" id="importEmailFile" accept=".csv,.txt" style="display: block; width: 100%;">
+                        <small style="color: #666; margin-top: 5px; display: block;">支援 .txt (每行一個 Email) 或 .csv (第一欄為 Email)</small>
+                    </div>
+                    <div id="importResult" style="margin-top: 15px; display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="document.getElementById('importModal').classList.remove('show'); document.getElementById('importModal').style.display='none';">取消</button>
+                    <button class="btn btn-primary" id="confirmImportBtn">確認匯入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Unsubscribe Manager Modal -->
+    <div class="modal" id="unsubscribeModal" style="z-index: 9999; background-color: rgba(0,0,0,0.5);">
+        <div class="modal-dialog" style="max-width: 500px; margin: 2rem auto;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 class="modal-title">退訂信箱管理</h3>
+                    <button class="close-btn" onclick="document.getElementById('unsubscribeModal').classList.remove('show'); document.getElementById('unsubscribeModal').style.display='none';" style="border: none; background: none; font-size: 24px; cursor: pointer;">&times;</button>
+                </div>
+                <div class="modal-body">
+                    <p style="color: #666; margin-bottom: 20px;">
+                        設定專門接收使用者退訂回覆的信箱。系統將自動掃描並標記要求退訂的聯絡人。
+                    </p>
+                    
+                    <form id="unsubscribeForm" onsubmit="return false;">
+                        <div class="form-row" style="display: flex; gap: 15px; margin-bottom: 15px;">
+                            <div class="form-group" style="flex: 2;">
+                                <label for="unsubServer" style="display: block; margin-bottom: 5px; font-weight: 600;">IMAP 伺服器</label>
+                                <input type="text" id="unsubServer" class="form-control" value="mail.winton.com.tw" placeholder="例如: mail.winton.com.tw" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                            <div class="form-group" style="flex: 1;">
+                                <label for="unsubPort" style="display: block; margin-bottom: 5px; font-weight: 600;">Port</label>
+                                <input type="number" id="unsubPort" class="form-control" value="993" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                            </div>
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="unsubUser" style="display: block; margin-bottom: 5px; font-weight: 600;">帳號 (Email)</label>
+                            <input type="text" id="unsubUser" class="form-control" placeholder="user@example.com" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 15px;">
+                            <label for="unsubPassword" style="display: block; margin-bottom: 5px; font-weight: 600;">密碼</label>
+                            <input type="password" id="unsubPassword" class="form-control" placeholder="請輸入密碼" style="width: 100%; padding: 8px; border: 1px solid #ddd; border-radius: 4px;" autocomplete="current-password">
+                        </div>
+
+                        <div class="form-group" style="margin-bottom: 20px;">
+                            <label style="display: flex; align-items: center; cursor: pointer;">
+                                <input type="checkbox" id="unsubTls" checked style="margin-right: 8px;">
+                                啟用 SSL/TLS
+                            </label>
+                        </div>
+                    </form>
+
+                    <div id="unsubResult" style="margin-top: 15px; display: none;"></div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" onclick="document.getElementById('unsubscribeModal').classList.remove('show'); document.getElementById('unsubscribeModal').style.display='none';">關閉</button>
+                    <button class="btn btn-primary" id="unsubscribeCheckBtn">
+                        <i class="fas fa-search"></i> 開始檢查
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/dev-config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth-guard.js?v=6"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/user-auth.js"></script>
+    <script src="js/invalid-emails.js"></script>
+</body>
+</html>

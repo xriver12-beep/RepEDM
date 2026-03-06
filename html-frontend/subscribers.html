@@ -1,0 +1,868 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂閱者管理 - 電子報管理系統</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/subscribers.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <!-- Excel/CSV Parsing Libraries -->
+    <script src="js/vendor/papaparse.min.js"></script>
+    <script src="js/vendor/xlsx.full.min.js"></script>
+</head>
+<body>
+    <!-- 側邊欄 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">電子報前台系統</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="user-dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="subscribers.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">訂閱者管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invalid-emails.html" class="menu-link">
+                    <span class="menu-icon">⚠️</span>
+                    <span class="menu-text">無效信箱查詢</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="campaigns.html" class="menu-link">
+                    <span class="menu-icon">📧</span>
+                    <span class="menu-text">活動製作</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="templates.html" class="menu-link">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">EDM管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="assets.html" class="menu-link">
+                    <span class="menu-icon">🖼️</span>
+                    <span class="menu-text">素材管理</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager,Approver">
+                <a href="approvals.html" class="menu-link">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-text">送審作業</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 主要內容區域 -->
+    <main class="main-content" id="mainContent">
+        <!-- 頂部導航 -->
+        <header class="top-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="page-title">訂閱者管理</h1>
+            <div class="header-actions">
+                <button class="btn btn-secondary" id="showImportModalBtn">
+                    <i class="fas fa-file-import"></i>
+                    匯入訂戶
+                </button>
+                <button class="btn btn-primary" id="showAddSubscriberModalBtn">
+                    <i class="fas fa-plus"></i>
+                    新增訂閱者
+                </button>
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <span class="user-avatar">👤</span>
+                        <div class="user-info">
+                            <span class="user-name">一般使用者</span>
+                            <span class="user-role">一般使用者</span>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-avatar-large">👤</div>
+                            <div class="user-details">
+                                <div class="user-name-large">載入中...</div>
+                                <div class="user-email">-</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="user-profile.html" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            個人資料
+                        </a>
+                        <a href="user-dashboard.html" class="dropdown-item">
+                            <span class="dropdown-icon">📊</span>
+                            儀表板
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                            <span class="dropdown-icon">🚪</span>
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 頁面內容 -->
+        <div class="page-content">
+            <!-- 統計概覽 -->
+            <div class="stats-overview" id="statsContainer">
+                <div class="stat-card">
+                    <div class="stat-icon">👥</div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-stat="total">-</div>
+                        <div class="stat-label">總訂閱者</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-stat="active">-</div>
+                        <div class="stat-label">活躍訂閱者</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📈</div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-stat="newThisMonth">-</div>
+                        <div class="stat-label">本月新增</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📉</div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-stat="unsubscribed">-</div>
+                        <div class="stat-label">本月取消</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">⚠️</div>
+                    <div class="stat-content">
+                        <div class="stat-number" data-stat="invalid">-</div>
+                        <div class="stat-label">無效信箱</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 主要管理區域 -->
+            <div class="management-container">
+                <!-- 左側分類管理面板 (已移除) -->
+
+
+                <!-- 主要訂閱者列表 -->
+                <div class="subscribers-main">
+                    <div class="table-toolbar">
+                        <div class="search-section">
+                            <div class="search-box">
+                                <i class="fas fa-search"></i>
+                                <input type="text" id="searchInput" placeholder="搜尋姓名、Email、公司、電話..." class="search-input">
+                            <button id="clearSearchBtn" class="search-clear" style="display: none;">
+                                <i class="fas fa-times"></i>
+                            </button>
+                            </div>
+                        </div>
+                        
+                        <div class="filter-section">
+                            <select id="statusFilter" class="filter-select">
+                                <option value="">所有狀態</option>
+                                <option value="active">活躍</option>
+                                <option value="inactive">非活躍</option>
+                                <option value="unsubscribed">已取消訂閱</option>
+                                <option value="invalid">無效 (Invalid)</option>
+                            </select>
+                        </div>
+                        <div class="filter-item">
+                            <!-- Multi-select Dropdown -->
+                            <div class="multi-select-dropdown" id="quickCategoryFilterContainer">
+                                <div class="select-trigger" id="quickCategoryTrigger">
+                                    <span class="selected-text">所有分類標籤</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="select-options" id="quickCategoryOptions">
+                                    <!-- Options will be populated by JS -->
+                                </div>
+                            </div>
+                            
+                            <button class="btn btn-secondary" id="showAdvancedFiltersBtn">
+                                <i class="fas fa-filter"></i>
+                                進階篩選
+                            </button>
+                        </div>
+
+                        <div class="action-section">
+                            <button class="btn btn-secondary" id="exportSubscribersBtn">
+                                <i class="fas fa-file-export"></i>
+                                匯出
+                            </button>
+                            <button class="btn btn-secondary" id="bulkActionsBtn" style="display: none;">
+                                <i class="fas fa-tasks"></i>
+                                批量操作
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 批量操作面板 -->
+                    <div class="bulk-actions-panel" id="bulkActionsPanel" style="display: none;">
+                        <div class="bulk-actions-header">
+                            <span class="selection-count">已選擇 0 位訂閱者</span>
+                            <button class="btn btn-sm btn-secondary" id="hideBulkActionsBtn">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </div>
+                        <div class="bulk-actions-content">
+                            <div class="bulk-action-group">
+                                <label>分類操作：</label>
+                                <button class="btn btn-primary btn-sm" id="bulkAddCategoriesBtn">
+                                    <i class="fas fa-plus"></i>
+                                    添加分類
+                                </button>
+                                <button class="btn btn-warning btn-sm" id="bulkRemoveCategoriesBtn">
+                                    <i class="fas fa-minus"></i>
+                                    移除分類
+                                </button>
+                            </div>
+                            <div class="bulk-action-group">
+                                <label>狀態操作：</label>
+                                <button class="btn btn-info btn-sm" id="bulkUpdateStatusBtn" style="background-color: #17a2b8; color: white;">
+                                    <i class="fas fa-sync-alt"></i>
+                                    更新狀態
+                                </button>
+                            </div>
+                            <div class="bulk-action-group">
+                                <label>其他操作：</label>
+                                <button class="btn btn-info btn-sm" id="bulkUpdateDataBtn" style="background-color: #17a2b8; color: white;">
+                                    <i class="fas fa-pen"></i>
+                                    批量修正資料
+                                </button>
+                                <button class="btn btn-info btn-sm" id="bulkCorrectEmailBtn" style="background-color: #17a2b8; color: white;">
+                                    <i class="fas fa-edit"></i>
+                                    批量修正 Email
+                                </button>
+                                <button class="btn btn-danger btn-sm" id="bulkDeleteBtn">
+                                    <i class="fas fa-trash"></i>
+                                    批量刪除
+                                </button>
+                                <button class="btn btn-secondary btn-sm" id="bulkExportBtn">
+                                    <i class="fas fa-download"></i>
+                                    匯出選中
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 選中的分類顯示 -->
+                    <div class="selected-categories" id="selectedCategories" style="display: none;">
+                        <div class="selected-categories-header">
+                            <span>已套用的篩選條件：</span>
+                            <button class="btn btn-sm btn-secondary" id="clearAllFiltersBtn">清除全部</button>
+                        </div>
+                        <div class="selected-categories-list" id="selectedCategoriesList">
+                            <!-- 動態生成選中的分類標籤 -->
+                        </div>
+                    </div>
+
+                    <!-- 訂閱者表格 -->
+                    <div class="table-container">
+                        <div class="table-header">
+                            <div class="table-controls">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="selectAll">
+                                    <span class="checkmark"></span>
+                                </label>
+                                <span class="selected-count" id="selectedCount">已選擇 0 項</span>
+                            </div>
+                            <div class="table-info">
+                                <span id="tableInfo">載入中...</span>
+                            </div>
+                        </div>
+
+                        <div class="table-wrapper">
+                            <table class="subscribers-table" id="subscribersTable">
+                                <thead>
+                                    <tr>
+                                        <th width="40">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="selectAllHeader">
+                                    <span class="checkmark"></span>
+                                </label>
+                            </th>
+                                        <th width="200" class="sort-header" data-sort="email">
+                                            電子郵件
+                                            <i class="fas fa-sort sort-icon"></i>
+                                        </th>
+                                        <th width="120" class="sort-header" data-sort="firstName">
+                                            姓名
+                                            <i class="fas fa-sort sort-icon"></i>
+                                        </th>
+                                        <th width="120">公司名稱</th>
+                                        <th width="100">營業單位</th>
+                                        <th width="100">城市</th>
+                                        <th width="100" class="sort-header" data-sort="status">
+                                            狀態
+                                            <i class="fas fa-sort sort-icon"></i>
+                                        </th>
+                                        <th width="200">分類標籤</th>
+                                        <th width="120" class="sort-header" data-sort="subscribedAt">
+                                            訂閱日期
+                                            <i class="fas fa-sort sort-icon"></i>
+                                        </th>
+                                        <th width="120">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="subscribersTableBody">
+                                    <tr class="loading-row">
+                                        <td colspan="8">
+                                            <div class="loading-indicator">
+                                                <div class="loading-spinner"></div>
+                                                <span>載入訂閱者資料中...</span>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <!-- 分頁控制 -->
+                        <div class="pagination-container" id="pagination">
+                            <div class="pagination-info">
+                                <span class="page-info"></span>
+                            </div>
+                            <div class="pagination-controls">
+                                <div class="page-links"></div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- 進階篩選模態框 -->
+    <div class="modal" id="advancedFilterModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>進階篩選</h3>
+                <button class="modal-close" data-modal="advancedFilterModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="advancedFilterForm">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label>訂閱日期區間</label>
+                            <div class="date-range-group">
+                                <input type="date" id="filterStartDate" name="startDate" placeholder="開始日期">
+                                <span>至</span>
+                                <input type="date" id="filterEndDate" name="endDate" placeholder="結束日期">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>分類群組</label>
+                            <select id="filterCategoryGroup" name="categoryGroup">
+                                <option value="all">所有群組</option>
+                                <option value="customer">客戶分類</option>
+                                <option value="organization">組織分類</option>
+                                <option value="geography">地理區域</option>
+                                <option value="department">部門分類</option>
+                                <option value="contract">合約分類</option>
+                                <option value="product">產品分類</option>
+                                <option value="identity">身份分類</option>
+                            </select>
+                        </div>
+                        <div class="form-group" id="advancedCategoryContainer" style="display:none;">
+                            <label>選擇分類</label>
+                            <div class="multi-select-dropdown" style="width: 100%;">
+                                <div class="select-trigger" id="advancedCategoryTrigger">
+                                    <span class="selected-text">所有分類</span>
+                                    <i class="fas fa-chevron-down"></i>
+                                </div>
+                                <div class="select-options" id="advancedCategoryOptions">
+                                    <!-- Checkboxes injected by JS -->
+                                </div>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label>信箱狀態</label>
+                            <select id="filterAdvancedStatus" name="status">
+                                <option value="all">所有狀態</option>
+                                <option value="invalid">無效信箱</option>
+                                <option value="active">活躍信箱</option>
+                                <option value="inactive">非活躍信箱</option>
+                                <option value="unsubscribed">已取消訂閱</option>
+                            </select>
+                        </div>
+                        <div class="form-group full-width">
+                            <label>分類標籤</label>
+                            <input type="text" id="filterTags" name="tags" placeholder="輸入標籤關鍵字">
+                        </div>
+                        <div class="form-group">
+                            <label for="filterCountry">營業單位</label>
+                            <input type="text" id="filterCountry" name="country" placeholder="輸入營業單位">
+                        </div>
+                        <div class="form-group">
+                            <label for="filterCity">城市</label>
+                            <input type="text" id="filterCity" name="city" placeholder="輸入城市">
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="resetAdvancedFiltersBtn">重置</button>
+                <button class="btn btn-primary" id="applyAdvancedFiltersBtn">套用篩選</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 新增訂閱者模態框 -->
+    <div class="modal" id="addSubscriberModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>新增訂閱者</h3>
+                <button class="modal-close" data-modal="addSubscriberModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="addSubscriberForm" class="subscriber-form">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="subscriberEmail">電子郵件 *</label>
+                            <input type="email" id="subscriberEmail" name="email" maxlength="255" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberFirstName">名字</label>
+                            <input type="text" id="subscriberFirstName" name="firstName" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberLastName">姓氏</label>
+                            <input type="text" id="subscriberLastName" name="lastName" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberCompany">公司名稱</label>
+                            <input type="text" id="subscriberCompany" name="company" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberPhone">電話</label>
+                            <input type="tel" id="subscriberPhone" name="phone" maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberGender">性別</label>
+                            <select id="subscriberGender" name="gender">
+                                <option value="">請選擇</option>
+                                <option value="Male">男性</option>
+                                <option value="Female">女性</option>
+                                <option value="Other">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberCountry">營業單位</label>
+                            <input type="text" id="subscriberCountry" name="country" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="subscriberCity">城市</label>
+                            <input type="text" id="subscriberCity" name="city" maxlength="100">
+                        </div>
+                    </div>
+                    
+                    <!-- 分類設定 -->
+                    <div class="category-assignment">
+                        <h4>分類設定</h4>
+                        <div class="category-tabs" id="addCategoryTabs">
+                            <button type="button" class="category-tab active" data-type="customer"><i class="fas fa-users"></i> 客戶</button>
+                            <button type="button" class="category-tab" data-type="organization"><i class="fas fa-sitemap"></i> 組織</button>
+                            <button type="button" class="category-tab" data-type="geography"><i class="fas fa-map-marked-alt"></i> 地理</button>
+                            <button type="button" class="category-tab" data-type="department"><i class="fas fa-building"></i> 部門</button>
+                            <button type="button" class="category-tab" data-type="contract"><i class="fas fa-file-contract"></i> 合約</button>
+                            <button type="button" class="category-tab" data-type="product"><i class="fas fa-box"></i> 產品</button>
+                            <button type="button" class="category-tab" data-type="identity"><i class="fas fa-id-badge"></i> 身份</button>
+                        </div>
+                        <div class="category-content" id="categoryAssignmentContent">
+                            <!-- 動態載入分類選項 -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelAddSubscriberBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitAddSubscriberBtn">儲存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 編輯訂閱者模態框 -->
+    <div class="modal" id="editSubscriberModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>編輯訂閱者</h3>
+                <button class="modal-close" data-modal="editSubscriberModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <form id="editSubscriberForm" class="subscriber-form">
+                    <input type="hidden" id="editSubscriberId" name="id">
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="editSubscriberEmail">電子郵件 *</label>
+                            <input type="email" id="editSubscriberEmail" name="email" maxlength="255" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberStatus">狀態 *</label>
+                            <select id="editSubscriberStatus" name="status" required>
+                                <option value="active">活躍 (Active)</option>
+                                <option value="inactive">非活躍 (Inactive)</option>
+                                <option value="unsubscribed">已取消訂閱 (Unsubscribed)</option>
+                                <option value="bounced">退回 (Bounced)</option>
+                                <option value="complained">投訴 (Complained)</option>
+                                <option value="invalid">無效 (Invalid)</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberFirstName">名字</label>
+                            <input type="text" id="editSubscriberFirstName" name="firstName" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberLastName">姓氏</label>
+                            <input type="text" id="editSubscriberLastName" name="lastName" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberCompany">公司名稱</label>
+                            <input type="text" id="editSubscriberCompany" name="company" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberPhone">電話</label>
+                            <input type="tel" id="editSubscriberPhone" name="phone" maxlength="20">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberGender">性別</label>
+                            <select id="editSubscriberGender" name="gender">
+                                <option value="">請選擇</option>
+                                <option value="Male">男性</option>
+                                <option value="Female">女性</option>
+                                <option value="Other">其他</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberCountry">營業單位</label>
+                            <input type="text" id="editSubscriberCountry" name="country" maxlength="100">
+                        </div>
+                        <div class="form-group">
+                            <label for="editSubscriberCity">城市</label>
+                            <input type="text" id="editSubscriberCity" name="city" maxlength="100">
+                        </div>
+                    </div>
+                    
+                    <!-- 分類設定 -->
+                    <div class="category-assignment">
+                        <h4>分類設定</h4>
+                        <div class="category-tabs" id="editCategoryTabs">
+                            <!-- 動態載入 -->
+                        </div>
+                        <div class="category-content" id="editCategoryAssignmentContent">
+                            <!-- 動態載入分類選項 -->
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelEditSubscriberBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitUpdateSubscriberBtn">更新</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量分類操作模態框 -->
+    <div class="modal" id="bulkCategoryModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3 id="bulkCategoryModalTitle">批量操作分類</h3>
+                <button class="modal-close" data-modal="bulkCategoryModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="bulkCategoryModalMessage">請選擇要操作的分類：</p>
+                <div class="category-assignment">
+                    <div class="category-tabs" id="bulkCategoryTabs">
+                        <!-- 動態載入 -->
+                    </div>
+                    <div class="category-content" id="bulkCategoryContent">
+                        <!-- 動態載入分類選項 -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBulkCategoryBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitBulkCategoryBtn">確認</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量修正資料模態框 -->
+    <div class="modal" id="bulkUpdateDataModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>批量修正資料</h3>
+                <button class="modal-close" data-modal="bulkUpdateDataModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>請輸入要批量更新的資料（留空則不更新該欄位）：</p>
+                <form id="bulkUpdateDataForm">
+                    <div class="form-group">
+                        <label for="bulkUpdateCountry">營業單位</label>
+                        <input type="text" id="bulkUpdateCountry" name="country" maxlength="100" placeholder="輸入新的營業單位名稱">
+                    </div>
+                    <div class="form-group">
+                        <label for="bulkUpdateCity">城市</label>
+                        <input type="text" id="bulkUpdateCity" name="city" maxlength="100" placeholder="輸入新的城市名稱">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBulkUpdateDataBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitBulkUpdateDataBtn">更新</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 匯入訂戶模態框 -->
+    <div class="modal" id="importModal">
+        <div class="modal-content large">
+            <div class="modal-header">
+                <h3>匯入訂戶資料</h3>
+                <button class="modal-close" data-modal="importModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="import-steps">
+                    <div class="step active" data-step="1">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <h4>選擇檔案</h4>
+                            <div class="file-upload-area" id="fileUploadArea">
+                                <i class="fas fa-cloud-upload-alt"></i>
+                                <p>拖拽檔案到此處或點擊選擇檔案</p>
+                                <p class="file-info">支援 CSV, Excel (.xlsx, .xls) 格式</p>
+                                <input type="file" id="importFile" accept=".csv,.xlsx,.xls" style="display: none;">
+                                <button type="button" class="btn btn-primary" id="triggerImportFileBtn">
+                                    選擇檔案
+                                </button>
+                            </div>
+                            <div class="selected-file" id="selectedFile" style="display: none;">
+                                <i class="fas fa-file"></i>
+                                <span class="file-name"></span>
+                                <button type="button" class="btn btn-sm btn-secondary" id="removeSelectedFileBtn">
+                                    <i class="fas fa-times"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step" data-step="2">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <h4>欄位對應</h4>
+                            <div class="field-mapping" id="fieldMapping">
+                                <!-- 動態生成欄位對應 -->
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="step" data-step="3">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <h4>預覽與確認</h4>
+                            <div class="import-preview" id="importPreview">
+                                <!-- 顯示匯入預覽 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <div id="importProgressContainer" style="display: none; width: 100%; margin-bottom: 10px;">
+                    <div class="progress" style="height: 20px; background-color: #e9ecef; border-radius: 4px; overflow: hidden;">
+                        <div id="importProgressBar" class="progress-bar progress-bar-striped progress-bar-animated bg-success" role="progressbar" style="width: 0%; height: 100%; transition: width 0.3s ease;"></div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <small id="importProgressText" class="text-muted">準備匯入...</small>
+                        <small id="importProgressPercent" class="text-muted">0%</small>
+                    </div>
+                </div>
+                <div id="importActionButtons">
+                    <button type="button" class="btn btn-secondary" id="cancelImportBtn">取消</button>
+                    <button type="button" class="btn btn-secondary" id="prevStepBtn" style="display: none;">上一步</button>
+                    <button type="button" class="btn btn-primary" id="nextStepBtn">下一步</button>
+                    <button type="button" class="btn btn-success" id="importBtn" style="display: none;">開始匯入</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類管理模態框 -->
+    <div class="modal" id="categoryManagementModal">
+        <div class="modal-content extra-large">
+            <div class="modal-header">
+                <h3>分類管理</h3>
+                <button class="modal-close" data-modal="categoryManagementModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="category-management-container">
+                    <div class="category-type-tabs">
+                        <button class="category-type-tab active" data-type="customer"><i class="fas fa-users"></i> 客戶分類</button>
+                        <button class="category-type-tab" data-type="organization"><i class="fas fa-sitemap"></i> 組織分類</button>
+                        <button class="category-type-tab" data-type="geography"><i class="fas fa-map-marked-alt"></i> 地理區域</button>
+                        <button class="category-type-tab" data-type="department"><i class="fas fa-building"></i> 部門分類</button>
+                        <button class="category-type-tab" data-type="contract"><i class="fas fa-file-contract"></i> 合約分類</button>
+                        <button class="category-type-tab" data-type="product"><i class="fas fa-box"></i> 產品分類</button>
+                        <button class="category-type-tab" data-type="identity"><i class="fas fa-id-badge"></i> 身份分類</button>
+                    </div>
+                    <div class="category-management-content" id="categoryManagementContent">
+                        <!-- 動態載入分類管理內容 -->
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="closeCategoryManagementBtn">關閉</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量修正 Email 模態框 -->
+    <div class="modal" id="bulkEmailCorrectionModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>批量修正 Email</h3>
+                <button class="modal-close" data-modal="bulkEmailCorrectionModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>請輸入要搜尋的字串和替換的字串。此操作將應用於所有選中的訂閱者。</p>
+                <form id="bulkEmailCorrectionForm">
+                    <div class="form-group">
+                        <label for="findStr">搜尋字串 (例如: hient.net)</label>
+                        <input type="text" id="findStr" name="findStr" class="form-control" required placeholder="請輸入錯誤的部分，如 hient.net">
+                    </div>
+                    <div class="form-group">
+                        <label for="replaceStr">替換為 (例如: hinet.net)</label>
+                        <input type="text" id="replaceStr" name="replaceStr" class="form-control" placeholder="請輸入正確的部分，如 hinet.net">
+                    </div>
+                    <div class="alert alert-warning" style="margin-top: 15px; background-color: #fff3cd; color: #856404; padding: 10px; border-radius: 4px; border: 1px solid #ffeeba;">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        注意：此操作無法復原，請確認輸入正確。如果替換後的 Email 已存在，舊有的重複帳號將被刪除，以保留您目前修正的這筆資料。
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBulkEmailCorrectionBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitBulkEmailCorrectionBtn">開始修正</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量更新狀態模態框 -->
+    <div class="modal" id="bulkUpdateStatusModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>批量更新狀態</h3>
+                <button class="modal-close" data-modal="bulkUpdateStatusModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>請選擇要應用於所有選中訂閱者的新狀態。</p>
+                <form id="bulkUpdateStatusForm">
+                    <div class="form-group">
+                        <label for="bulkStatusSelect">新狀態</label>
+                        <select id="bulkStatusSelect" class="form-control" required>
+                            <option value="">請選擇狀態...</option>
+                            <option value="subscribed">已訂閱 (Subscribed)</option>
+                            <option value="unsubscribed">已退訂 (Unsubscribed)</option>
+                            <option value="bounced">退信 (Bounced)</option>
+                            <option value="complained">抱怨 (Complained)</option>
+                            <option value="invalid">無效 (Invalid)</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBulkUpdateStatusBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitBulkUpdateStatusBtn">確認更新</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 批量更新資料模態框 -->
+    <div class="modal" id="bulkUpdateDataModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>批量更新資料</h3>
+                <button class="modal-close" data-modal="bulkUpdateDataModal">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p>請輸入要更新的欄位值，留空則不更新該欄位。</p>
+                <form id="bulkUpdateDataForm">
+                    <div class="form-group">
+                        <label for="bulkUpdateCountry">營業單位 (Country)</label>
+                        <input type="text" id="bulkUpdateCountry" name="country" placeholder="請輸入營業單位">
+                    </div>
+                    <div class="form-group">
+                        <label for="bulkUpdateCity">城市 (City)</label>
+                        <input type="text" id="bulkUpdateCity" name="city" placeholder="請輸入城市">
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancelBulkUpdateDataBtn">取消</button>
+                <button type="button" class="btn btn-primary" id="submitBulkUpdateDataBtn">確認更新</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript 檔案 -->
+    <script src="js/dev-config.js?v=4"></script>
+    <script src="js/utils.js?v=4"></script>
+    <script src="js/state-manager.js?v=4"></script>
+    <script src="js/api.js?v=8"></script>
+    <script src="js/admin-auth.js?v=4"></script>
+    <script src="js/user-auth.js?v=5"></script>
+    <script src="js/auth-guard.js?v=6"></script>
+    <script src="js/components.js?v=4"></script>
+    <script src="js/category-management.js?v=5"></script>
+    <script src="js/notification.js?v=4"></script>
+    <script src="js/main.js?v=4" defer></script>
+    <script src="js/subscribers.js?v=10" defer></script>
+</body>
+</html>

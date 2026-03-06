@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>審核驗證 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/login.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .login-card {
+            max-width: 500px;
+        }
+        #status-container {
+            min-height: 250px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+        .message-text {
+            font-size: 1.2rem;
+            color: #4b5563;
+            margin-top: 15px;
+        }
+    </style>
+</head>
+<body class="login-body">
+    <div class="login-container">
+        <div class="login-card">
+            <div class="login-header">
+                <div class="logo">
+                    <i class="fas fa-envelope-open-text"></i>
+                </div>
+                <h1 class="login-title">WintonEDM</h1>
+                <p class="login-subtitle">審核快速通道</p>
+            </div>
+
+            <div id="status-container">
+                <div id="loading" style="text-align: center;">
+                    <i class="fas fa-spinner fa-spin fa-3x" style="color: #3b82f6;"></i>
+                    <p class="message-text">正在驗證您的身份...</p>
+                </div>
+                
+                <div id="error" style="display: none; text-align: center;">
+                    <i class="fas fa-times-circle fa-3x" style="color: #ef4444;"></i>
+                    <p id="error-message" class="message-text">驗證失敗</p>
+                    <a href="login.html" class="login-btn" style="margin-top: 30px; display: inline-block; text-decoration: none; width: auto; padding: 10px 30px;">
+                        返回登入
+                    </a>
+                </div>
+                
+                <div id="success" style="display: none; text-align: center;">
+                    <i class="fas fa-check-circle fa-3x" style="color: #10b981;"></i>
+                    <p class="message-text">驗證成功！正在進入系統...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // API 基礎路徑 - 智慧判斷
+        const hostname = window.location.hostname;
+        const protocol = window.location.protocol;
+        const port = window.location.port;
+        
+        let API_BASE_URL;
+
+        // 如果是 HTTPS 或是在後端端口 (3001/3443) 上運行，使用相對路徑
+        if (protocol === 'https:' || port === '3001' || port === '3443') {
+             API_BASE_URL = '/api';
+             console.log('Using relative API path:', API_BASE_URL);
+        } else {
+             // 開發環境 (例如 Live Server 5500)
+             const apiHost = hostname === '127.0.0.1' ? 'localhost' : hostname;
+             API_BASE_URL = `http://${apiHost}:3001/api`;
+             console.log('Using absolute API path:', API_BASE_URL);
+        }
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const token = urlParams.get('token');
+
+            if (!token) {
+                showError('無效的連結：缺少驗證代碼');
+                return;
+            }
+
+            try {
+                // 延遲一下讓使用者看到驗證過程 (UX優化)
+                await new Promise(resolve => setTimeout(resolve, 800));
+
+                const response = await fetch(`${API_BASE_URL}/auth/verify-approval-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ token })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showSuccess();
+                    
+                    // 儲存 Token 和使用者資訊
+                    localStorage.setItem('authToken', data.data.token);
+                    localStorage.setItem('refreshToken', data.data.refreshToken);
+                    localStorage.setItem('user', JSON.stringify(data.data.user));
+                    
+                    // 如果原本有 adminToken，為了避免混淆，可以考慮清除，或者並存。
+                    // 這裡我們假設這是使用者入口，所以存入 authToken
+                    
+                    // 跳轉到審核頁面
+                    setTimeout(() => {
+                        window.location.href = `approvals.html?highlight=${data.data.approvalId}`;
+                    }, 1000);
+                } else {
+                    showError(data.message || '驗證失敗');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showError('系統錯誤，無法連接伺服器');
+            }
+        });
+
+        function showError(msg) {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('success').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+            document.getElementById('error-message').textContent = msg;
+        }
+
+        function showSuccess() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'none';
+            document.getElementById('success').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

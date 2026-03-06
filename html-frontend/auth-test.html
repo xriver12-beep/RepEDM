@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>權限控制測試</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .status { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+        .warning { background-color: #fff3cd; color: #856404; }
+        button { margin: 5px; padding: 10px 15px; }
+    </style>
+</head>
+<body>
+    <h1>權限控制測試</h1>
+    <div id="status"></div>
+    
+    <h3>測試步驟：</h3>
+    <button onclick="clearAuth()">1. 清除認證</button>
+    <button onclick="testDashboardAccess()">2. 測試未登入訪問儀表板</button>
+    <button onclick="performLogin()">3. 執行登入</button>
+    <button onclick="testDashboardAccessAfterLogin()">4. 測試登入後訪問儀表板</button>
+    <button onclick="checkCurrentAuth()">檢查當前認證狀態</button>
+
+    <script>
+        // 內聯AdminAuth服務
+        class AdminAuthService {
+            constructor() {
+                this.baseURL = 'http://localhost:3001/api/admin-auth';
+                this.tokenKey = 'adminAuthToken';
+                this.userKey = 'adminUser';
+                this.timeout = 10000;
+            }
+
+            getToken() {
+                return localStorage.getItem(this.tokenKey);
+            }
+
+            getUser() {
+                const userStr = localStorage.getItem(this.userKey);
+                return userStr ? JSON.parse(userStr) : null;
+            }
+
+            setToken(token) {
+                localStorage.setItem(this.tokenKey, token);
+            }
+
+            setUser(user) {
+                localStorage.setItem(this.userKey, JSON.stringify(user));
+            }
+
+            clearAuth() {
+                localStorage.removeItem(this.tokenKey);
+                localStorage.removeItem(this.userKey);
+            }
+
+            isAuthenticated() {
+                return !!this.getToken();
+            }
+
+            async login(username, password) {
+                try {
+                    const response = await fetch(`${this.baseURL}/login`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({ username, password }),
+                        signal: AbortSignal.timeout(this.timeout)
+                    });
+
+                    const data = await response.json();
+
+                    if (!response.ok) {
+                        throw new Error(data.message || '登入失敗');
+                    }
+
+                    this.setToken(data.token);
+                    this.setUser(data.user);
+
+                    return data;
+                } catch (error) {
+                    console.error('登入錯誤:', error);
+                    throw error;
+                }
+            }
+        }
+
+        // 創建全域實例
+        window.adminAuth = new AdminAuthService();
+
+        function addStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('status');
+            const div = document.createElement('div');
+            div.className = `status ${type}`;
+            div.textContent = new Date().toLocaleTimeString() + ': ' + message;
+            statusDiv.appendChild(div);
+            statusDiv.scrollTop = statusDiv.scrollHeight;
+        }
+
+        function clearAuth() {
+            adminAuth.clearAuth();
+            addStatus('✓ 認證資訊已清除', 'success');
+        }
+
+        function testDashboardAccess() {
+            addStatus('測試未登入狀態下訪問儀表板...', 'info');
+            
+            // 檢查當前認證狀態
+            if (adminAuth.isAuthenticated()) {
+                addStatus('⚠️ 警告：當前仍處於登入狀態，請先清除認證', 'warning');
+                return;
+            }
+            
+            addStatus('✓ 確認未登入狀態', 'success');
+            addStatus('即將在新視窗中打開儀表板頁面...', 'info');
+            
+            // 在新視窗中打開儀表板
+            const dashboardWindow = window.open('/dashboard.html', '_blank');
+            
+            setTimeout(() => {
+                addStatus('如果儀表板頁面重定向到登入頁面，則權限控制正常工作', 'info');
+            }, 1000);
+        }
+
+        async function performLogin() {
+            addStatus('執行登入...', 'info');
+            
+            try {
+                const result = await adminAuth.login('admin', 'admin123');
+                addStatus('✓ 登入成功！', 'success');
+                addStatus(`用戶：${result.user.displayName} (${result.user.role})`, 'success');
+            } catch (error) {
+                addStatus(`✗ 登入失敗：${error.message}`, 'error');
+            }
+        }
+
+        function testDashboardAccessAfterLogin() {
+            addStatus('測試登入後訪問儀表板...', 'info');
+            
+            if (!adminAuth.isAuthenticated()) {
+                addStatus('⚠️ 警告：當前未登入，請先執行登入', 'warning');
+                return;
+            }
+            
+            addStatus('✓ 確認已登入狀態', 'success');
+            addStatus('即將在新視窗中打開儀表板頁面...', 'info');
+            
+            // 在新視窗中打開儀表板
+            const dashboardWindow = window.open('/dashboard.html', '_blank');
+            
+            setTimeout(() => {
+                addStatus('如果儀表板頁面正常顯示（不重定向），則權限控制正常工作', 'info');
+            }, 1000);
+        }
+
+        function checkCurrentAuth() {
+            const isAuth = adminAuth.isAuthenticated();
+            const user = adminAuth.getUser();
+            
+            addStatus(`認證狀態：${isAuth ? '已登入' : '未登入'}`, isAuth ? 'success' : 'error');
+            
+            if (user) {
+                addStatus(`當前用戶：${user.displayName} (${user.role})`, 'info');
+            }
+        }
+
+        // 頁面載入時檢查認證狀態
+        window.addEventListener('load', () => {
+            addStatus('權限控制測試頁面載入完成', 'info');
+            checkCurrentAuth();
+        });
+    </script>
+</body>
+</html>

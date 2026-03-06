@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>通知系統測試 - 固定顯示版本</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .test-section {
+            margin-bottom: 30px;
+            padding: 20px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+            background: #fafafa;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #555;
+        }
+        .btn {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 5px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            text-decoration: none;
+            transition: background-color 0.3s;
+        }
+        .btn-primary { background: #007bff; color: white; }
+        .btn-success { background: #28a745; color: white; }
+        .btn-warning { background: #ffc107; color: #212529; }
+        .btn-danger { background: #dc3545; color: white; }
+        .btn-info { background: #17a2b8; color: white; }
+        .btn:hover { opacity: 0.9; }
+        .description {
+            color: #666;
+            font-size: 13px;
+            margin-bottom: 15px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1><i class="fas fa-bell"></i> 通知系統測試 - 固定顯示版本</h1>
+        
+        <div class="test-section">
+            <h3>NotificationUtils 測試（utils.js）</h3>
+            <div class="description">
+                測試 NotificationUtils 類的固定顯示功能，所有通知都需要用戶手動點擊「確認」按鈕才會關閉。
+            </div>
+            <button class="btn btn-success" onclick="testNotificationUtils('success')">
+                <i class="fas fa-check"></i> 成功通知
+            </button>
+            <button class="btn btn-danger" onclick="testNotificationUtils('error')">
+                <i class="fas fa-times"></i> 錯誤通知
+            </button>
+            <button class="btn btn-warning" onclick="testNotificationUtils('warning')">
+                <i class="fas fa-exclamation-triangle"></i> 警告通知
+            </button>
+            <button class="btn btn-info" onclick="testNotificationUtils('info')">
+                <i class="fas fa-info-circle"></i> 信息通知
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3>NotificationService 測試（notification.js）</h3>
+            <div class="description">
+                測試 NotificationService 類的固定顯示功能，包括一般通知和確認對話框。
+            </div>
+            <button class="btn btn-success" onclick="testNotificationService('success')">
+                <i class="fas fa-check"></i> 成功通知
+            </button>
+            <button class="btn btn-danger" onclick="testNotificationService('error')">
+                <i class="fas fa-times"></i> 錯誤通知
+            </button>
+            <button class="btn btn-warning" onclick="testNotificationService('warning')">
+                <i class="fas fa-exclamation-triangle"></i> 警告通知
+            </button>
+            <button class="btn btn-info" onclick="testNotificationService('info')">
+                <i class="fas fa-info-circle"></i> 信息通知
+            </button>
+            <button class="btn btn-primary" onclick="testConfirmDialog()">
+                <i class="fas fa-question-circle"></i> 確認對話框
+            </button>
+        </div>
+
+        <div class="test-section">
+            <h3>清除所有通知</h3>
+            <div class="description">
+                清除當前顯示的所有通知。
+            </div>
+            <button class="btn btn-danger" onclick="clearAllNotifications()">
+                <i class="fas fa-trash"></i> 清除所有通知
+            </button>
+        </div>
+    </div>
+
+    <!-- 引入必要的 JavaScript 文件 -->
+    <script src="js/utils.js"></script>
+    <script src="js/notification.js"></script>
+
+    <script>
+        // 測試 NotificationUtils
+        function testNotificationUtils(type) {
+            const messages = {
+                success: '操作成功完成！這是一個成功通知，需要您點擊確認按鈕才會關閉。',
+                error: '發生錯誤！這是一個錯誤通知，請檢查您的操作並點擊確認按鈕。',
+                warning: '注意！這是一個警告通知，請仔細閱讀並點擊確認按鈕。',
+                info: '這是一個信息通知，為您提供重要信息，請點擊確認按鈕確認已閱讀。'
+            };
+
+            if (window.NotificationUtils) {
+                window.NotificationUtils[type](messages[type]);
+            } else {
+                alert('NotificationUtils 未載入');
+            }
+        }
+
+        // 測試 NotificationService
+        function testNotificationService(type) {
+            const messages = {
+                success: '操作成功完成！這是一個固定顯示的成功通知。',
+                error: '發生錯誤！這是一個固定顯示的錯誤通知。',
+                warning: '注意！這是一個固定顯示的警告通知。',
+                info: '這是一個固定顯示的信息通知。'
+            };
+
+            if (window.notification) {
+                window.notification[type](messages[type]);
+            } else {
+                alert('NotificationService 未載入');
+            }
+        }
+
+        // 測試確認對話框
+        function testConfirmDialog() {
+            if (window.notification) {
+                window.notification.confirm(
+                    '您確定要執行此操作嗎？這是一個確認對話框測試。',
+                    function() {
+                        window.notification.success('您點擊了確認按鈕！');
+                    },
+                    function() {
+                        window.notification.info('您點擊了取消按鈕！');
+                    }
+                );
+            } else {
+                alert('NotificationService 未載入');
+            }
+        }
+
+        // 清除所有通知
+        function clearAllNotifications() {
+            // 清除 NotificationService 的通知
+            if (window.notification) {
+                window.notification.clear();
+            }
+
+            // 清除 NotificationUtils 的通知
+            const containers = document.querySelectorAll('.notification-container');
+            containers.forEach(container => {
+                if (container.parentNode) {
+                    container.parentNode.removeChild(container);
+                }
+            });
+
+            alert('所有通知已清除');
+        }
+
+        // 頁面載入完成後的提示
+        window.addEventListener('load', function() {
+            console.log('通知系統測試頁面載入完成');
+            console.log('NotificationUtils 可用:', !!window.NotificationUtils);
+            console.log('NotificationService 可用:', !!window.notification);
+        });
+    </script>
+</body>
+</html>

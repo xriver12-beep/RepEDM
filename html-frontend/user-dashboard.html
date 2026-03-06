@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>前台儀表板 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- 側邊欄 -->
+    <nav class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 class="sidebar-title">電子報前台系統</h2>
+            <button class="sidebar-toggle" id="sidebarToggle">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+        </div>
+        
+        <ul class="sidebar-menu">
+            <li class="menu-item active">
+                <a href="user-dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="subscribers.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">訂閱者管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invalid-emails.html" class="menu-link">
+                    <span class="menu-icon">⚠️</span>
+                    <span class="menu-text">無效信箱查詢</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="campaigns.html" class="menu-link">
+                    <span class="menu-icon">📧</span>
+                    <span class="menu-text">活動製作</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="templates.html" class="menu-link">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">EDM管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="assets.html" class="menu-link">
+                    <span class="menu-icon">🖼️</span>
+                    <span class="menu-text">素材管理</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager,Approver">
+                <a href="approvals.html" class="menu-link">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-text">送審作業</span>
+                </a>
+            </li>
+        </ul>
+    </nav>
+
+    <!-- 主要內容區域 -->
+    <main class="main-content" id="mainContent">
+        <!-- 頂部導航 -->
+        <header class="top-header">
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <h1 class="page-title">儀表板</h1>
+            <div class="header-actions">
+                <div class="user-menu" id="userMenu">
+                    <button class="user-menu-btn" id="userMenuBtn">
+                        <span class="user-avatar">U</span>
+                        <div class="user-info">
+                            <span class="user-name">載入中...</span>
+                            <span class="user-role">使用者</span>
+                        </div>
+                        <span class="dropdown-arrow">▼</span>
+                    </button>
+                    <div class="user-dropdown" id="userDropdown">
+                        <div class="dropdown-header">
+                            <div class="user-avatar-large">U</div>
+                            <div class="user-details">
+                                <div class="user-name-large">載入中...</div>
+                                <div class="user-email">-</div>
+                            </div>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="user-profile.html" class="dropdown-item">
+                            <span class="dropdown-icon">👤</span>
+                            個人資料
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                            <span class="dropdown-icon">🚪</span>
+                            登出
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- 頁面內容 -->
+        <div class="page-content">
+            <!-- 頁面標題 -->
+            <div class="page-header">
+                <h1 class="page-heading">儀表板</h1>
+                <p class="page-description">歡迎使用電子報製作與發送平台</p>
+            </div>
+
+            <!-- 統計卡片 (已隱藏) -->
+            <div class="stats-grid" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-label">成功寄送</div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-change positive">30天</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">寄送失敗</div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-change negative">30天</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">本月發送</div>
+                    <div class="stat-value">--</div>
+                    <div class="stat-change positive">↗ +5%</div>
+                </div>
+                
+                <div class="stat-card">
+                    <div class="stat-label">平均開信率</div>
+                    <div class="stat-value">--%</div>
+                    <div class="stat-change positive">↗ +2.1%</div>
+                </div>
+            </div>
+
+            <!-- 內容區域 -->
+            <div class="content-grid">
+                <!-- 全站活動排程與審核狀態 -->
+                <div class="content-section campaign-status-section">
+                    <h2 class="section-title">全站活動排程與審核狀態</h2>
+                    <div class="table-responsive">
+                        <table class="data-table" id="campaignStatusTable">
+                            <thead>
+                                <tr>
+                                    <th style="width: 10%;">目前狀態</th>
+                                    <th style="width: 25%;">eDM名稱</th>
+                                    <th style="width: 15%;">發送時間</th>
+                                    <th style="width: 10%;">發送人數</th>
+                                    <th style="width: 10%;">開信率</th>
+                                    <th style="width: 10%;">點擊率</th>
+                                    <th style="width: 10%;">建立者</th>
+                                    <th style="width: 10%;">建立時間</th>
+                                </tr>
+                            </thead>
+                            <tbody id="campaignStatusBody">
+                                <tr>
+                                    <td colspan="6" class="text-center">載入中...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- 快速操作 -->
+                <div class="content-section quick-actions">
+                    <h2 class="section-title">快速操作</h2>
+                    <div class="action-buttons">
+                        <button class="action-btn primary" id="createCampaignBtn">
+                            <span class="btn-icon">📧</span>
+                            <span class="btn-text">建立新活動</span>
+                        </button>
+                        
+                        <button class="action-btn secondary" id="manageSubscribersBtn">
+                            <span class="btn-icon">👥</span>
+                            <span class="btn-text">管理訂閱者</span>
+                        </button>
+                        
+                        <button class="action-btn secondary" id="editTemplatesBtn">
+                            <span class="btn-icon">📝</span>
+                            <span class="btn-text">編輯EDM</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/utils.js?v=4"></script>
+    <script src="js/state-manager.js?v=4"></script>
+    
+    <script src="js/user-auth.js?v=4"></script>
+    <script src="js/auth-guard.js?v=6"></script>
+    <script src="js/api.js?v=4"></script>
+    <script src="js/components.js?v=4"></script>
+    <script src="js/main.js?v=4"></script>
+    <script src="js/dashboard.js?v=6"></script> <!-- 可能需要 user-dashboard.js 如果邏輯差異大 -->
+    <script>
+        // 使用者認證守衛初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            // 如果有 AuthGuard 類
+            if (typeof AuthGuard !== 'undefined') {
+                const authGuard = new AuthGuard();
+                // AuthGuard 通常在 constructor 裡自動 init
+            }
+            
+            // 更新 UI 顯示使用者名稱
+            const user = window.userAuth.getUser();
+            if (user) {
+                const userNames = document.querySelectorAll('.user-name, .user-name-large');
+                userNames.forEach(el => el.textContent = user.fullName || user.full_name || user.username || '使用者');
+                
+                const userEmails = document.querySelectorAll('.user-email');
+                userEmails.forEach(el => el.textContent = user.email || '');
+                
+                const roleMap = {
+                    'Admin': '管理員',
+                    'Manager': '主管',
+                    'User': '一般使用者',
+                    'Editor': '編輯者',
+                    'Viewer': '檢視者',
+                    'Approver': '審核者'
+                };
+                const userRoles = document.querySelectorAll('.user-role');
+                userRoles.forEach(el => el.textContent = roleMap[user.role] || user.role || '一般使用者');
+            }
+        });
+    </script>
+</body>
+</html>

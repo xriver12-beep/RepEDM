@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>個人資料 - WintonEDM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="css/styles.css" rel="stylesheet">
+    <link href="css/components.css" rel="stylesheet">
+</head>
+<body>
+    <!-- 導航欄 -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="dashboard.html">
+                <i class="fas fa-envelope me-2"></i>
+                WintonEDM
+            </a>
+            
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="dashboard.html">
+                            <i class="fas fa-tachometer-alt me-1"></i>
+                            儀表板
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="users.html">
+                            <i class="fas fa-users me-1"></i>
+                            使用者管理
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="email-logs.html">
+                            <i class="fas fa-list-alt me-1"></i>
+                            郵件日誌
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="settings.html">
+                            <i class="fas fa-cog me-1"></i>
+                            系統設定
+                        </a>
+                    </li>
+                </ul>
+                
+                <div class="navbar-nav">
+                    <div class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" role="button" data-bs-toggle="dropdown">
+                            <div class="user-info">
+                                <i class="fas fa-user-circle me-2"></i>
+                                <span id="userDisplayName">載入中...</span>
+                            </div>
+                        </a>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a href="profile.html" class="dropdown-item active">
+                                <i class="fas fa-user me-2"></i>
+                                個人資料
+                            </a></li>
+                            <li><a href="settings.html" class="dropdown-item">
+                                <i class="fas fa-cog me-2"></i>
+                                設定
+                            </a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                                <i class="fas fa-sign-out-alt me-2"></i>
+                                登出
+                            </button></li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- 主要內容 -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h1 class="h3 mb-0">
+                        <i class="fas fa-user me-2"></i>
+                        個人資料
+                    </h1>
+                </div>
+
+                <div class="row">
+                    <!-- 個人資料卡片 -->
+                    <div class="col-lg-8">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-id-card me-2"></i>
+                                    基本資料
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="profileForm">
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="username" class="form-label">使用者名稱</label>
+                                            <input type="text" class="form-control" id="username" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="email" class="form-label">電子郵件</label>
+                                            <input type="email" class="form-control" id="email">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="firstName" class="form-label">名字</label>
+                                            <input type="text" class="form-control" id="firstName">
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="lastName" class="form-label">姓氏</label>
+                                            <input type="text" class="form-control" id="lastName">
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="role" class="form-label">角色</label>
+                                            <input type="text" class="form-control" id="role" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="status" class="form-label">狀態</label>
+                                            <input type="text" class="form-control" id="status" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-md-6 mb-3">
+                                            <label for="createdAt" class="form-label">建立時間</label>
+                                            <input type="text" class="form-control" id="createdAt" readonly>
+                                        </div>
+                                        <div class="col-md-6 mb-3">
+                                            <label for="lastLoginAt" class="form-label">最後登入</label>
+                                            <input type="text" class="form-control" id="lastLoginAt" readonly>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex gap-2">
+                                        <button type="submit" class="btn btn-primary">
+                                            <i class="fas fa-save me-2"></i>
+                                            儲存變更
+                                        </button>
+                                        <button type="button" class="btn btn-secondary" id="cancelBtn">
+                                            <i class="fas fa-times me-2"></i>
+                                            取消
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 密碼變更卡片 -->
+                    <div class="col-lg-4">
+                        <div class="card">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-lock me-2"></i>
+                                    變更密碼
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <form id="passwordForm">
+                                    <div class="mb-3">
+                                        <label for="currentPassword" class="form-label">目前密碼</label>
+                                        <input type="password" class="form-control" id="currentPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="newPassword" class="form-label">新密碼</label>
+                                        <input type="password" class="form-control" id="newPassword" required>
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="confirmPassword" class="form-label">確認新密碼</label>
+                                        <input type="password" class="form-control" id="confirmPassword" required>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning w-100">
+                                        <i class="fas fa-key me-2"></i>
+                                        變更密碼
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+
+                        <!-- 帳戶資訊卡片 -->
+                        <div class="card mt-3">
+                            <div class="card-header">
+                                <h5 class="card-title mb-0">
+                                    <i class="fas fa-info-circle me-2"></i>
+                                    帳戶資訊
+                                </h5>
+                            </div>
+                            <div class="card-body">
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">帳戶 ID:</span>
+                                    <span id="userId">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center mb-2">
+                                    <span class="text-muted">權限等級:</span>
+                                    <span id="roleLevel">-</span>
+                                </div>
+                                <div class="d-flex justify-content-between align-items-center">
+                                    <span class="text-muted">帳戶狀態:</span>
+                                    <span id="accountStatus" class="badge bg-success">啟用</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 載入中遮罩 -->
+    <div id="loadingOverlay" class="loading-overlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255, 255, 255, 0.9); display: flex; align-items: center; justify-content: center; z-index: 9999; flex-direction: column;">
+        <div class="loading-spinner">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">載入中...</span>
+            </div>
+            <div class="mt-2">載入中...</div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <!-- 應用程式 JS -->
+    <script src="js/utils.js"></script>
+    <script src="js/state-manager.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-auth-guard.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/main.js"></script>
+    
+    <!-- 個人資料頁面專用 JS -->
+    <script>
+        class ProfileManager {
+            constructor() {
+                this.originalData = {};
+                this.init();
+            }
+
+            showLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = 'flex';
+                }
+            }
+
+            hideLoading() {
+                const overlay = document.getElementById('loadingOverlay');
+                if (overlay) {
+                    overlay.style.display = 'none';
+                }
+            }
+
+            async init() {
+                try {
+                    this.showLoading();
+                    await this.loadProfile();
+                    this.setupEventListeners();
+                } catch (error) {
+                    console.error('初始化個人資料頁面失敗:', error);
+                    if (window.NotificationUtils) {
+                        NotificationUtils.error('載入個人資料失敗');
+                    } else {
+                        alert('載入個人資料失敗');
+                    }
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async loadProfile() {
+                try {
+                    console.log('開始載入用戶資料...');
+                    
+                    // 檢查 adminAuth 是否可用
+                    if (!window.adminAuth) {
+                        throw new Error('adminAuth 服務未初始化');
+                    }
+                    
+                    const user = await adminAuth.getCurrentUser();
+                    console.log('獲取到用戶資料:', user);
+                    
+                    if (!user) {
+                        throw new Error('無法獲取用戶資料');
+                    }
+                    
+                    // 儲存原始資料
+                    this.originalData = { ...user };
+                    
+                    // 填入表單
+                    document.getElementById('username').value = user.username || '';
+                    document.getElementById('email').value = user.email || '';
+                    document.getElementById('firstName').value = user.firstName || '';
+                    document.getElementById('lastName').value = user.lastName || '';
+                    document.getElementById('role').value = this.getRoleText(user.role);
+                    document.getElementById('status').value = user.isActive ? '啟用' : '停用';
+                    document.getElementById('createdAt').value = this.formatDate(user.createdAt);
+                    document.getElementById('lastLoginAt').value = this.formatDate(user.lastLoginAt);
+                    
+                    // 更新帳戶資訊
+                    document.getElementById('userId').textContent = user.id;
+                    document.getElementById('roleLevel').textContent = this.getRoleText(user.role);
+                    document.getElementById('accountStatus').textContent = user.isActive ? '啟用' : '停用';
+                    document.getElementById('accountStatus').className = `badge ${user.isActive ? 'bg-success' : 'bg-danger'}`;
+                    
+                    // 更新導航欄用戶名稱 (由 admin-auth-guard.js 統一處理)
+                    /*
+                    const displayName = user.displayName || user.username || user.email;
+                    document.getElementById('userDisplayName').textContent = displayName;
+                    */
+                    
+                } catch (error) {
+                    console.error('載入個人資料失敗:', error);
+                    throw error;
+                }
+            }
+
+            setupEventListeners() {
+                // 個人資料表單提交
+                document.getElementById('profileForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.updateProfile();
+                });
+
+                // 取消按鈕
+                document.getElementById('cancelBtn').addEventListener('click', () => {
+                    this.resetForm();
+                });
+
+                // 密碼變更表單提交
+                document.getElementById('passwordForm').addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    this.changePassword();
+                });
+
+                // 登出按鈕
+                /*
+                document.getElementById('logoutBtn').addEventListener('click', () => {
+                    handleLogout();
+                });
+                */
+            }
+
+            async updateProfile() {
+                try {
+                    this.showLoading();
+                    
+                    const formData = {
+                        email: document.getElementById('email').value,
+                        firstName: document.getElementById('firstName').value,
+                        lastName: document.getElementById('lastName').value
+                    };
+
+                    const result = await adminAuth.updateProfile(formData);
+
+                    if (result.success) {
+                        if (window.NotificationUtils) {
+                            NotificationUtils.success('個人資料更新成功');
+                        } else {
+                            alert('個人資料更新成功');
+                        }
+                        await this.loadProfile(); // 重新載入資料
+                    } else {
+                        throw new Error(result.message || '更新失敗');
+                    }
+
+                } catch (error) {
+                    console.error('更新個人資料失敗:', error);
+                    if (window.NotificationUtils) {
+                        NotificationUtils.error('更新個人資料失敗: ' + error.message);
+                    } else {
+                        alert('更新個人資料失敗: ' + error.message);
+                    }
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            async changePassword() {
+                try {
+                    const currentPassword = document.getElementById('currentPassword').value;
+                    const newPassword = document.getElementById('newPassword').value;
+                    const confirmPassword = document.getElementById('confirmPassword').value;
+
+                    if (newPassword !== confirmPassword) {
+                        if (window.NotificationUtils) {
+                            NotificationUtils.error('新密碼與確認密碼不符');
+                        } else {
+                            alert('新密碼與確認密碼不符');
+                        }
+                        return;
+                    }
+
+                    if (newPassword.length < 8) {
+                        if (window.NotificationUtils) {
+                            NotificationUtils.error('新密碼長度至少需要 8 個字元');
+                        } else {
+                            alert('新密碼長度至少需要 8 個字元');
+                        }
+                        return;
+                    }
+
+                    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)/;
+                    if (!passwordRegex.test(newPassword)) {
+                         if (window.NotificationUtils) {
+                            NotificationUtils.error('新密碼必須包含大小寫字母和數字');
+                        } else {
+                            alert('新密碼必須包含大小寫字母和數字');
+                        }
+                        return;
+                    }
+
+                    this.showLoading();
+
+                    const result = await adminAuth.changePassword(currentPassword, newPassword);
+
+                    if (result.success) {
+                        if (window.NotificationUtils) {
+                            NotificationUtils.success('密碼變更成功');
+                        } else {
+                            alert('密碼變更成功');
+                        }
+                        document.getElementById('passwordForm').reset();
+                    } else {
+                        throw new Error(result.message || '密碼變更失敗');
+                    }
+
+                } catch (error) {
+                    console.error('變更密碼失敗:', error);
+                    if (window.NotificationUtils) {
+                        NotificationUtils.error('變更密碼失敗: ' + error.message);
+                    } else {
+                        alert('變更密碼失敗: ' + error.message);
+                    }
+                } finally {
+                    this.hideLoading();
+                }
+            }
+
+            resetForm() {
+                document.getElementById('firstName').value = this.originalData.firstName || '';
+                document.getElementById('lastName').value = this.originalData.lastName || '';
+            }
+
+            getRoleText(role) {
+                const roleMap = {
+                    'Admin': '管理員',
+                    'Manager': '管理者',
+                    'Editor': '編輯者',
+                    'User': '使用者'
+                };
+                return roleMap[role] || role;
+            }
+
+            formatDate(dateString) {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                return date.toLocaleString('zh-TW');
+            }
+        }
+
+        // 頁面載入完成後初始化
+        document.addEventListener('DOMContentLoaded', async () => {
+            try {
+                // 初始化管理員認證守衛
+                const authGuard = new AdminAuthGuard();
+                await authGuard.init();
+                
+                // 等待一小段時間確保認證狀態穩定
+                await new Promise(resolve => setTimeout(resolve, 100));
+                
+                // 確保用戶已認證後再初始化個人資料管理器
+                if (window.adminAuth && adminAuth.isAuthenticated()) {
+                    console.log('開始初始化個人資料管理器');
+                    new ProfileManager();
+                } else {
+                    console.error('用戶未認證，重定向到登入頁面');
+                    window.location.href = 'login.html';
+                }
+            } catch (error) {
+                console.error('認證初始化失敗:', error);
+                window.location.href = 'login.html';
+            }
+        });
+    </script>
+</body>
+</html>

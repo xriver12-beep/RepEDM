@@ -1,0 +1,757 @@
+/* 審核工作流程頁面樣式 */
+
+/* 統計概覽 */
+.stats-overview {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
+}
+
+.stat-icon {
+    font-size: 2rem;
+    width: 60px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+}
+
+.stat-info h3 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin: 0;
+    color: #2d3748;
+}
+
+.stat-info p {
+    margin: 0.25rem 0 0 0;
+    color: #718096;
+    font-size: 0.9rem;
+}
+
+/* 工具欄 */
+.toolbar {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.toolbar-left {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    gap: 0.75rem;
+    align-items: center;
+}
+
+.filter-group select {
+    padding: 0.5rem 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    background: white;
+    font-size: 0.9rem;
+    min-width: 120px;
+}
+
+.search-box {
+    display: flex;
+    align-items: center;
+    background: #f7fafc;
+    border-radius: 6px;
+    padding: 0.25rem;
+}
+
+.search-box input {
+    border: none;
+    background: transparent;
+    padding: 0.5rem 0.75rem;
+    outline: none;
+    font-size: 0.9rem;
+    width: 250px;
+}
+
+.search-btn {
+    border: none;
+    background: none;
+    padding: 0.5rem;
+    cursor: pointer;
+    color: #718096;
+}
+
+.search-btn:hover {
+    color: #4a5568;
+}
+
+.toolbar-right {
+    display: flex;
+    gap: 0.75rem;
+}
+
+/* 按鈕樣式 */
+.btn {
+    padding: 0.5rem 1rem;
+    border-radius: 6px;
+    border: none;
+    font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    font-size: 0.9rem;
+}
+
+.btn-primary {
+    background: #667eea;
+    color: white;
+}
+
+.btn-primary:hover {
+    background: #5a67d8;
+}
+
+.btn-secondary {
+    background: #edf2f7;
+    color: #4a5568;
+}
+
+.btn-secondary:hover {
+    background: #e2e8f0;
+}
+
+.btn-success {
+    background: #48bb78;
+    color: white;
+}
+
+.btn-success:hover {
+    background: #38a169;
+}
+
+.btn-danger {
+    background: #f56565;
+    color: white;
+}
+
+.btn-danger:hover {
+    background: #e53e3e;
+}
+
+.btn-warning {
+    background: #ecc94b;
+    color: #744210;
+}
+
+.btn-warning:hover {
+    background: #d69e2e;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* 審核列表 */
+.approvals-list {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
+}
+
+.list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.bulk-select {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.sort-controls select {
+    padding: 0.25rem 0.5rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 4px;
+    background: white;
+    font-size: 0.9rem;
+}
+
+/* 審核項目卡片 */
+.approval-item {
+    display: flex;
+    gap: 1rem;
+    padding: 1.25rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 8px;
+    margin-bottom: 1rem;
+    transition: all 0.2s;
+    background: white;
+}
+
+.approval-item:hover {
+    border-color: #cbd5e0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.approval-checkbox {
+    display: flex;
+    align-items: flex-start;
+    padding-top: 0.25rem;
+}
+
+.approval-info {
+    flex: 1;
+    display: grid;
+    grid-template-columns: 2fr 100px 100px 100px 200px 150px 100px;
+    gap: 1rem;
+    align-items: center;
+}
+
+.approval-title {
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 0.25rem;
+    cursor: pointer;
+}
+
+.approval-title:hover {
+    color: #667eea;
+}
+
+.approval-meta {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* 狀態標籤 */
+.approval-status, .approval-priority, .approval-type {
+    padding: 0.25rem 0.75rem;
+    border-radius: 9999px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    text-align: center;
+    display: inline-block;
+}
+
+.approval-status.pending { background: #feebc8; color: #c05621; }
+.approval-status.in_review { background: #ebf8ff; color: #2b6cb0; }
+.approval-status.approved { background: #c6f6d5; color: #2f855a; }
+.approval-status.rejected { background: #fed7d7; color: #c53030; }
+.approval-status.revision { background: #faf089; color: #744210; }
+
+.approval-priority.high { color: #e53e3e; font-weight: bold; }
+.approval-priority.medium { color: #d69e2e; }
+.approval-priority.low { color: #718096; }
+
+.approval-type.campaign { background: #e9d8fd; color: #553c9a; }
+.approval-type.template { background: #bee3f8; color: #2c5282; }
+.approval-type.content { background: #c6f6d5; color: #276749; }
+
+/* 審核階段 */
+.stage-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    background: #f7fafc;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+/* 操作按鈕 */
+.approval-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: flex-end;
+}
+
+.action-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #718096;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 1.4rem;
+}
+
+.action-btn:hover {
+    background: #f7fafc;
+    color: #4a5568;
+}
+
+.action-btn.approve:hover { background: #c6f6d5; color: #2f855a; border-color: #9ae6b4; }
+.action-btn.reject:hover { background: #fed7d7; color: #c53030; border-color: #feb2b2; }
+
+/* 圖示按鈕 - 用於工作流程設定等 */
+.btn-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #718096;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    font-size: 1.3rem;
+    margin: 0 4px;
+}
+
+.btn-icon:hover {
+    background: #f7fafc;
+    color: #4a5568;
+    border-color: #cbd5e0;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+}
+
+.btn-icon.danger:hover {
+    background: #fed7d7;
+    color: #c53030;
+    border-color: #feb2b2;
+}
+
+/* 模態框樣式 */
+/* Deprecated: Using standard Bootstrap-like modal structure from components.css */
+/* .modal-overlay { ... } - Removed */
+
+/* Override/Extend components.css modal-content if needed, but don't restrict width */
+.modal-content {
+    /* Inherit base styles from components.css, adding specific overrides only if necessary */
+    /* Note: Do NOT set max-width here, let modal-dialog handle it */
+    background: white;
+    border-radius: 12px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    /* Ensure content takes full width of dialog */
+    width: 100%;
+}
+
+/* Deprecated: .modal-content.large - Use .modal-xl on the modal wrapper instead */
+/* .modal-content.large { ... } - Removed */
+
+.modal-header {
+    padding: 1.5rem;
+    border-bottom: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.modal-header h3 {
+    margin: 0;
+    color: #2d3748;
+}
+
+.modal-close {
+    background: none;
+    border: none;
+    font-size: 1.5rem;
+    color: #a0aec0;
+    cursor: pointer;
+    padding: 0;
+}
+
+.modal-close:hover {
+    color: #718096;
+}
+
+.modal-body {
+    padding: 1.5rem;
+    overflow-y: auto;
+    /* flex: 1; Removed to allow footer to connect to content when content is short */
+}
+
+.modal-footer {
+    padding: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+}
+
+.modal-footer .btn {
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+/* 詳情頁籤 */
+.approval-detail-tabs {
+    display: flex;
+    gap: 1rem;
+    border-bottom: 1px solid #e2e8f0;
+    margin-bottom: 1.5rem;
+}
+
+.tab-btn {
+    background: none;
+    border: none;
+    padding: 0.75rem 1rem;
+    font-weight: 500;
+    color: #718096;
+    cursor: pointer;
+    border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+    color: #667eea;
+    border-bottom-color: #667eea;
+}
+
+.tab-content .tab-pane {
+    display: none;
+}
+
+.tab-content .tab-pane.active {
+    display: block;
+}
+
+/* 概覽網格 */
+.overview-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.5rem;
+}
+
+.overview-item label {
+    display: block;
+    color: #718096;
+    font-size: 0.85rem;
+    margin-bottom: 0.25rem;
+}
+
+.overview-item span, .overview-item p {
+    color: #2d3748;
+    font-weight: 500;
+}
+
+.overview-item.full-width {
+    grid-column: span 3;
+}
+
+/* Content Preview - Gmail Style */
+.content-preview {
+    background-color: transparent;
+    padding: 0;
+    border-radius: 0;
+    min-height: 0;
+}
+
+.preview-container {
+    background: transparent;
+    box-shadow: none;
+    border-radius: 0;
+    max-width: 100%;
+    margin: 0;
+    overflow: hidden;
+}
+
+.preview-toolbar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-bottom: 0;
+}
+
+/* New browser-like preview styles */
+.approval-preview-frame {
+    width: 100%;
+    border: 0;
+    display: block;
+    min-height: 600px;
+}
+
+.approval-source-view {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    background: #f5f5f5;
+    padding: 1rem;
+    margin: 0;
+    min-height: 600px;
+    box-sizing: border-box;
+}
+
+/* 評論樣式 */
+.comments-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    max-height: 400px;
+    overflow-y: auto;
+}
+
+.comment-item {
+    background: #f7fafc;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.comment-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+    font-size: 0.85rem;
+}
+
+.comment-author {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.comment-time {
+    color: #718096;
+}
+
+.comment-body {
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.add-comment textarea {
+    width: 100%;
+    padding: 0.75rem;
+    border: 1px solid #e2e8f0;
+    border-radius: 6px;
+    margin-bottom: 0.75rem;
+    resize: vertical;
+}
+
+/* 歷史記錄時間軸 */
+.history-timeline {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.history-timeline::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: #e2e8f0;
+}
+
+.timeline-item {
+    position: relative;
+    margin-bottom: 1.5rem;
+}
+
+.timeline-dot {
+    position: absolute;
+    left: -2.4rem;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background: white;
+    border: 2px solid #667eea;
+}
+
+.timeline-content {
+    background: white;
+    padding: 1rem;
+    border-radius: 8px;
+    border: 1px solid #e2e8f0;
+}
+
+.timeline-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 0.5rem;
+}
+
+.timeline-action {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.timeline-time {
+    font-size: 0.85rem;
+    color: #718096;
+}
+
+/* 分頁 */
+.pagination {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 1.5rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e2e8f0;
+}
+
+.pagination-controls {
+    display: flex;
+    gap: 0.5rem;
+    align-items: center;
+}
+
+.page-numbers {
+    display: flex;
+    gap: 0.25rem;
+}
+
+.page-number {
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    border: 1px solid #e2e8f0;
+    background: white;
+    color: #4a5568;
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.page-number:hover {
+    background: #edf2f7;
+    color: #2d3748;
+}
+
+.page-number.active {
+    background: #667eea;
+    color: white;
+    border-color: #667eea;
+}
+
+.page-number.dots {
+    border: none;
+    background: none;
+    cursor: default;
+}
+
+/* 處理中指示器 */
+.processing-indicator {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: rgba(0, 0, 0, 0.75);
+    color: white;
+    padding: 1rem 2rem;
+    border-radius: 8px;
+    z-index: 100;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+/* 全螢幕模式樣式 */
+.modal-fullscreen .modal-dialog {
+    width: 100% !important;
+    height: 100% !important;
+    max-width: 100% !important;
+    max-height: 100% !important;
+    margin: 0 !important;
+    transform: none !important;
+    border-radius: 0;
+}
+
+.modal-fullscreen .modal-content {
+    height: 100% !important;
+    max-height: 100% !important;
+    border-radius: 0;
+}
+
+.modal-fullscreen .modal-body {
+    height: calc(100vh - 130px) !important; /* Adjust based on header/footer height */
+    overflow: hidden !important;
+    padding: 0 !important;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-fullscreen .approval-detail-tabs {
+    padding: 0.5rem 1.5rem 0;
+    margin-bottom: 0;
+}
+
+.modal-fullscreen .tab-content {
+    flex: 1;
+    overflow: hidden;
+    position: relative;
+    padding: 0 1.5rem 1.5rem;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-fullscreen .tab-pane {
+    height: 100%;
+}
+
+.modal-fullscreen .tab-pane#content {
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-fullscreen .content-preview {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.modal-fullscreen .preview-container {
+    flex: 1;
+    height: 100%;
+}
+
+.modal-fullscreen .approval-preview-frame {
+    height: 100% !important;
+    min-height: 0 !important;
+}
+
+.modal-fullscreen .preview-toolbar {
+    padding: 0.5rem 0;
+}

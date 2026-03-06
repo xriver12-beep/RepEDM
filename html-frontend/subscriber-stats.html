@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>訂閱者統計 - WintonEDM</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/dashboard.css">
+    <link rel="stylesheet" href="css/analytics.css">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        /* Tab Navigation Styles */
+        .tabs-container {
+            background: #fff;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06);
+        }
+        .nav-tabs {
+            display: flex;
+            list-style: none;
+            padding: 0;
+            margin: 0 0 20px 0;
+            border-bottom: 1px solid #e2e8f0;
+            gap: 1rem;
+        }
+        .nav-item {
+            padding: 12px 16px;
+            cursor: pointer;
+            font-weight: 500;
+            color: #718096;
+            border-bottom: 2px solid transparent;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+        .nav-item:hover {
+            color: #4a5568;
+            background-color: #f7fafc;
+            border-radius: 4px 4px 0 0;
+        }
+        .nav-item.active {
+            color: #3182ce;
+            border-bottom-color: #3182ce;
+            background-color: transparent;
+        }
+        .nav-item i {
+            margin-right: 8px;
+        }
+        
+        /* Tab Content Styles */
+        .tab-content {
+            display: none;
+            animation: fadeIn 0.3s ease;
+        }
+        .tab-content.active {
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        /* Adjustments for contained sections */
+        .charts-section, .report-section {
+            padding: 0;
+            margin: 0 !important;
+            box-shadow: none;
+            background: none;
+        }
+        .chart-container, .report-container {
+            border: 1px solid #e2e8f0;
+            box-shadow: none;
+            border-radius: 8px;
+            background: #fff;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">電子報管理系統</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <ul class="sidebar-menu">
+                <li class="menu-item">
+                    <a href="dashboard.html" class="menu-link">
+                        <span class="menu-icon">📊</span>
+                        <span class="menu-text">儀表板</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="users.html" class="menu-link">
+                        <span class="menu-icon">👥</span>
+                        <span class="menu-text">使用者管理</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="email-logs.html" class="menu-link">
+                        <span class="menu-icon">📋</span>
+                        <span class="menu-text">郵件日誌</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin,Manager">
+                    <a href="queue.html" class="menu-link">
+                        <span class="menu-icon">📨</span>
+                        <span class="menu-text">信件佇列</span>
+                    </a>
+                </li>
+                <li class="menu-item">
+                    <a href="analytics.html" class="menu-link">
+                        <span class="menu-icon">📈</span>
+                        <span class="menu-text">成效分析</span>
+                    </a>
+                </li>
+                <li class="menu-item active">
+                    <a href="subscriber-stats.html" class="menu-link">
+                        <span class="menu-icon">🌏</span>
+                        <span class="menu-text">訂閱者統計</span>
+                    </a>
+                </li>
+                <li class="menu-item" data-role-required="Admin">
+                    <a href="settings.html" class="menu-link">
+                        <span class="menu-icon">⚙️</span>
+                        <span class="menu-text">系統設定</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="main-content" id="mainContent">
+            <!-- 頂部標題欄 -->
+            <header class="top-header">
+                <button class="mobile-menu-btn" id="mobileMenuBtn">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+                <h1 class="page-title">訂閱者統計</h1>
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-avatar">U</span>
+                            <div class="user-info">
+                                <span class="user-name">載入中...</span>
+                                <span class="user-role">-</span>
+                            </div>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-avatar-large">U</div>
+                                <div class="user-details">
+                                    <div class="user-name-large">載入中...</div>
+                                    <div class="user-email">-</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="profile.html" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span>
+                                個人資料
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                                <span class="dropdown-icon">🚪</span>
+                                登出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Tab Navigation -->
+            <div class="tabs-container">
+                <ul class="nav-tabs">
+                    <li class="nav-item active" data-tab="domain-stats">
+                        <i class="fas fa-globe-americas me-2"></i>訂閱者網域統計
+                    </li>
+                    <li class="nav-item" data-tab="unsubscribe-stats">
+                        <i class="fas fa-user-times me-2"></i>退訂與刪除名單紀錄
+                    </li>
+                </ul>
+
+                <!-- Tab Content: Domain Stats -->
+                <div id="domain-stats" class="tab-content active">
+                    <section class="charts-section">
+                        <div class="chart-row">
+                            <div class="chart-container" style="width: 100%;">
+                                <div class="chart-header">
+                                    <h3>訂閱者網域統計 (全體訂閱者)</h3>
+                                </div>
+                                <div class="chart-content">
+                                    <div id="geoChart" class="geo-chart">
+                                        <!-- 動態載入 -->
+                                        <div class="text-center text-muted p-4">載入中...</div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+
+                <!-- Tab Content: Unsubscribe Stats -->
+                <div id="unsubscribe-stats" class="tab-content">
+                    <section class="report-section">
+                        <div class="report-container">
+                            <div class="report-header">
+                                <h3>退訂與刪除名單紀錄</h3>
+                                <div class="d-flex gap-2">
+                                    <div class="input-group input-group-sm" style="width: 250px;">
+                                        <input type="text" class="form-control" id="unsubSearchInput" placeholder="搜尋 Email 或姓名...">
+                                        <button class="btn btn-outline-primary" id="unsubSearchBtn"><i class="fas fa-search"></i></button>
+                                    </div>
+                                    <button id="refreshReportBtn" class="btn btn-sm btn-outline-secondary"><i class="fas fa-sync-alt"></i> 重新整理</button>
+                                </div>
+                            </div>
+                            <div class="report-content">
+                                <div class="table-responsive">
+                                    <table class="table report-table">
+                                        <thead>
+                                            <tr>
+                                                <th>退訂時間</th>
+                                                <th>Email</th>
+                                                <th>姓名</th>
+                                                <th>狀態</th>
+                                                <th>來源活動</th>
+                                                <th>IP 位址</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody id="unsubscribedReportBody">
+                                            <!-- Data will be loaded here -->
+                                        </tbody>
+                                    </table>
+                                </div>
+                                <!-- Pagination -->
+                                <div class="d-flex justify-content-between align-items-center mt-3">
+                                    <div class="text-muted small" id="unsubPaginationInfo"></div>
+                                    <nav aria-label="Page navigation">
+                                        <ul class="pagination justify-content-center mb-0" id="unsubPagination"></ul>
+                                    </nav>
+                                </div>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 模態框等其他組件 -->
+    <div id="modalContainer"></div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/utils.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/admin-auth.js"></script>
+    <script src="js/admin-auth-guard.js"></script>
+    <script src="js/user-auth.js"></script>
+    <script src="js/subscriber-stats.js"></script>
+    <script>
+        // 初始化認證守衛
+        document.addEventListener('DOMContentLoaded', async () => {
+            if (typeof AdminAuthGuard !== 'undefined') {
+                const authGuard = new AdminAuthGuard();
+                await authGuard.init();
+            }
+        });
+    </script>
+</body>
+</html>

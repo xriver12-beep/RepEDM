@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>取消訂閱電子報</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f5f5f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .container {
+            background-color: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        h1 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 24px;
+        }
+        p {
+            color: #666;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .form-group {
+            margin-bottom: 20px;
+            text-align: left;
+        }
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #555;
+            font-weight: 500;
+        }
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+        }
+        button {
+            background-color: #d9534f;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #c9302c;
+        }
+        .message {
+            margin-top: 20px;
+            padding: 10px;
+            border-radius: 4px;
+            display: none;
+        }
+        .success {
+            background-color: #dff0d8;
+            color: #3c763d;
+            border: 1px solid #d6e9c6;
+        }
+        .error {
+            background-color: #f2dede;
+            color: #a94442;
+            border: 1px solid #ebccd1;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>取消訂閱電子報</h1>
+        <div id="unsubscribe-form-container">
+            <p>請輸入您的 Email 地址以取消訂閱我們的電子報。<br>取消訂閱後，您將不再收到我們的任何行銷郵件。</p>
+            <form id="unsubscribe-form">
+                <div class="form-group">
+                    <label for="email">電子郵件地址</label>
+                    <input type="email" id="email" name="email" placeholder="example@email.com" required>
+                </div>
+                <button type="submit" id="submit-btn">確認取消訂閱</button>
+            </form>
+        </div>
+        <div id="message" class="message"></div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const form = document.getElementById('unsubscribe-form');
+            const messageDiv = document.getElementById('message');
+            const submitBtn = document.getElementById('submit-btn');
+            const formContainer = document.getElementById('unsubscribe-form-container');
+            
+            // API 基礎路徑 - 確保指向後端 API (如果此頁面運行在不同端口，需指定完整 URL)
+            // 由於使用者要求此頁面運行在獨立端口，我們需要明確指定後端 API 地址
+            // 預設後端運行在 3001 (HTTP) 或 3443 (HTTPS)
+            // 這裡假設後端 API 可通過相對路徑訪問 (如果有代理) 或直接指定
+            // 為了穩健性，我們先嘗試相對路徑，如果是在獨立端口且無代理，可能需要調整
+            // 但既然我們會在 server.js 增加代理，這裡保持相對路徑即可
+            const API_BASE = '/api';
+
+            // 檢查 URL 參數是否有 status=success (從郵件連結跳轉過來的情況)
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('status') === 'success') {
+                showSuccess('您已成功取消訂閱。');
+                formContainer.style.display = 'none';
+            }
+
+            form.addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const email = document.getElementById('email').value.trim();
+                if (!email) return;
+
+                submitBtn.disabled = true;
+                submitBtn.textContent = '處理中...';
+                messageDiv.style.display = 'none';
+
+                try {
+                    const response = await fetch('/api/tracking/unsubscribe-by-email', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ email })
+                    });
+
+                    const data = await response.json();
+
+                    if (data.success) {
+                        showSuccess(data.message || '您已成功取消訂閱。');
+                        formContainer.style.display = 'none';
+                    } else {
+                        showError(data.message || '取消訂閱失敗，請稍後再試。');
+                        submitBtn.disabled = false;
+                        submitBtn.textContent = '確認取消訂閱';
+                    }
+                } catch (error) {
+                    console.error('Error:', error);
+                    showError('發生網路錯誤，請稍後再試。');
+                    submitBtn.disabled = false;
+                    submitBtn.textContent = '確認取消訂閱';
+                }
+            });
+
+            function showSuccess(text) {
+                messageDiv.textContent = text;
+                messageDiv.className = 'message success';
+                messageDiv.style.display = 'block';
+            }
+
+            function showError(text) {
+                messageDiv.textContent = text;
+                messageDiv.className = 'message error';
+                messageDiv.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

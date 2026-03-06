@@ -1,0 +1,193 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員登入 - Winton EDM</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .login-card {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 400px;
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 2rem;
+        }
+        .login-header h2 {
+            color: #333;
+            font-weight: 600;
+        }
+        .form-control {
+            border-radius: 10px;
+            border: 1px solid #e0e0e0;
+            padding: 12px 15px;
+        }
+        .btn-login {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            border-radius: 10px;
+            padding: 12px;
+            font-weight: 600;
+            width: 100%;
+        }
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+        .alert {
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="login-card">
+        <div class="login-header">
+            <i class="fas fa-user-shield fa-3x text-primary mb-3"></i>
+            <h2>管理員登入</h2>
+            <p class="text-muted">請輸入您的管理員憑證</p>
+        </div>
+        
+        <div id="alert-container"></div>
+        
+        <form id="loginForm">
+            <div class="mb-3">
+                <label for="username" class="form-label">用戶名</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-user"></i></span>
+                    <input type="text" class="form-control" id="username" name="username" required>
+                </div>
+            </div>
+            
+            <div class="mb-3">
+                <label for="password" class="form-label">密碼</label>
+                <div class="input-group">
+                    <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    <input type="password" class="form-control" id="password" name="password" required>
+                </div>
+            </div>
+            
+            <div class="mb-3 form-check">
+                <input type="checkbox" class="form-check-input" id="rememberMe" name="rememberMe">
+                <label class="form-check-label" for="rememberMe">記住我</label>
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-login">
+                <span class="login-text">登入</span>
+                <span class="spinner-border spinner-border-sm d-none" role="status"></span>
+            </button>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Determine API URL based on current location
+        const getApiUrl = () => {
+            const hostname = window.location.hostname;
+            const protocol = window.location.protocol;
+            const port = window.location.port;
+            
+            if (port === '3443' || (protocol === 'https:' && !port)) {
+                return '/api';
+            } else {
+                const apiHost = hostname === '127.0.0.1' ? 'localhost' : hostname;
+                return `http://${apiHost}:3001/api`;
+            }
+        };
+
+        const API_URL = getApiUrl();
+
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const loginText = submitBtn.querySelector('.login-text');
+            const spinner = submitBtn.querySelector('.spinner-border');
+            const alertContainer = document.getElementById('alert-container');
+            
+            // 顯示載入狀態
+            submitBtn.disabled = true;
+            loginText.textContent = '登入中...';
+            spinner.classList.remove('d-none');
+            alertContainer.innerHTML = '';
+            
+            try {
+                const formData = new FormData(this);
+                const loginData = {
+                    username: formData.get('username'),
+                    password: formData.get('password'),
+                    rememberMe: formData.get('rememberMe') === 'on'
+                };
+                
+                const response = await fetch(`${API_URL}/admin-auth/login`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(loginData)
+                });
+                
+                const result = await response.json();
+                
+                if (result.success) {
+                    // 儲存 token
+                    localStorage.setItem('adminAuthToken', result.token);
+                    if (result.user) {
+                        localStorage.setItem('adminUser', JSON.stringify(result.user));
+                    }
+                    
+                    // 顯示成功訊息
+                    alertContainer.innerHTML = `
+                        <div class="alert alert-success">
+                            <i class="fas fa-check-circle"></i> 登入成功！正在跳轉...
+                        </div>
+                    `;
+                    
+                    // 跳轉到儀表板
+                    setTimeout(() => {
+                        window.location.href = 'dashboard.html';
+                    }, 1000);
+                } else {
+                    throw new Error(result.message || '登入失敗');
+                }
+            } catch (error) {
+                console.error('登入錯誤:', error);
+                alertContainer.innerHTML = `
+                    <div class="alert alert-danger">
+                        <i class="fas fa-exclamation-triangle"></i> ${error.message || '登入失敗，請檢查您的憑證'}
+                    </div>
+                `;
+            } finally {
+                // 恢復按鈕狀態
+                submitBtn.disabled = false;
+                loginText.textContent = '登入';
+                spinner.classList.add('d-none');
+            }
+        });
+        
+        // 檢查是否已經登入
+        if (localStorage.getItem('adminAuthToken')) {
+            document.getElementById('alert-container').innerHTML = `
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle"></i> 您已經登入，正在跳轉...
+                </div>
+            `;
+            setTimeout(() => {
+                window.location.href = 'dashboard.html';
+            }, 1000);
+        }
+    </script>
+</body>
+</html>

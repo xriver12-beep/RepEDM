@@ -1,0 +1,594 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EDM管理 - WintonEDM</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="css/styles.css">
+    <link rel="stylesheet" href="css/templates.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/image-upload.css">
+</head>
+<body>
+    <div class="app-container">
+        <!-- 側邊欄 -->
+        <nav class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h2 class="sidebar-title">電子報前台系統</h2>
+                <button class="sidebar-toggle" id="sidebarToggle">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </button>
+            </div>
+            
+            <ul class="sidebar-menu">
+            <li class="menu-item">
+                <a href="user-dashboard.html" class="menu-link">
+                    <span class="menu-icon">📊</span>
+                    <span class="menu-text">儀表板</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="subscribers.html" class="menu-link">
+                    <span class="menu-icon">👥</span>
+                    <span class="menu-text">訂閱者管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="invalid-emails.html" class="menu-link">
+                    <span class="menu-icon">⚠️</span>
+                    <span class="menu-text">無效信箱查詢</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="campaigns.html" class="menu-link">
+                    <span class="menu-icon">📧</span>
+                    <span class="menu-text">活動製作</span>
+                </a>
+            </li>
+            <li class="menu-item active">
+                <a href="templates.html" class="menu-link">
+                    <span class="menu-icon">📝</span>
+                    <span class="menu-text">EDM管理</span>
+                </a>
+            </li>
+            <li class="menu-item">
+                <a href="assets.html" class="menu-link">
+                    <span class="menu-icon">🖼️</span>
+                    <span class="menu-text">素材管理</span>
+                </a>
+            </li>
+            <li class="menu-item" data-role-required="Admin,Manager,Approver">
+                <a href="approvals.html" class="menu-link">
+                    <span class="menu-icon">✅</span>
+                    <span class="menu-text">送審作業</span>
+                </a>
+            </li>
+        </ul>
+        </nav>
+
+        <!-- 主要內容 -->
+        <main class="main-content">
+            <!-- 頂部標題欄 -->
+            <header class="page-header" style="margin-bottom: 1rem;">
+                <div class="page-title">
+                    <h1 style="font-size: 1.5rem;">EDM管理</h1>
+                    <p class="page-subtitle">建立和管理電子郵件EDM</p>
+                </div>
+                
+                <div class="header-actions">
+                    <div class="user-menu" id="userMenu">
+                        <button class="user-menu-btn" id="userMenuBtn">
+                            <span class="user-avatar">👤</span>
+                            <div class="user-info">
+                                <span class="user-name">載入中...</span>
+                                <span class="user-role">使用者</span>
+                            </div>
+                            <span class="dropdown-arrow">▼</span>
+                        </button>
+                        <div class="user-dropdown" id="userDropdown">
+                            <div class="dropdown-header">
+                                <div class="user-avatar-large">👤</div>
+                                <div class="user-details">
+                                    <div class="user-name-large">載入中...</div>
+                                    <div class="user-email">-</div>
+                                </div>
+                            </div>
+                            <div class="dropdown-divider"></div>
+                            <a href="user-profile.html" class="dropdown-item">
+                                <span class="dropdown-icon">👤</span>
+                                個人資料
+                            </a>
+                            <a href="user-dashboard.html" class="dropdown-item">
+                                <span class="dropdown-icon">📊</span>
+                                儀表板
+                            </a>
+                            <div class="dropdown-divider"></div>
+                            <button class="dropdown-item logout-btn" id="logoutBtn" data-action="logout">
+                                <span class="dropdown-icon">🚪</span>
+                                登出
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- 統計概覽 -->
+            <div class="stats-overview" style="display: none;">
+                <div class="stat-card">
+                    <div class="stat-icon">📝</div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-stat="total">0</div>
+                        <div class="stat-label">總EDM數</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">✅</div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-stat="published">0</div>
+                        <div class="stat-label">已發布</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📋</div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-stat="drafts">0</div>
+                        <div class="stat-label">草稿</div>
+                    </div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-icon">📊</div>
+                    <div class="stat-content">
+                        <div class="stat-value" data-stat="used">0</div>
+                        <div class="stat-label">已使用</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 分類標籤 -->
+            <div class="category-tabs" id="categoryTabs">
+                <button class="tab-btn active" data-category="all">所有EDM</button>
+                <button class="tab-btn" data-category="my">我的EDM</button>
+                <button class="tab-btn" data-category="public">公共EDM</button>
+                <!-- 動態生成的分類將放在這裡 -->
+            </div>
+
+            <!-- 工具欄 -->
+            <div class="toolbar">
+                <div class="toolbar-left">
+                    <button class="btn btn-primary" id="createTemplateBtn">
+                        <span class="btn-icon">➕</span>
+                        建立EDM
+                    </button>
+                    <button class="btn btn-secondary" id="importTemplateBtn">
+                        <span class="btn-icon">📥</span>
+                        匯入EDM
+                    </button>
+                    <button class="btn btn-secondary" id="exportTemplateBtn" style="display: none;">
+                        <span class="btn-icon">📤</span>
+                        匯出EDM
+                    </button>
+                </div>
+                
+                <div class="toolbar-right">
+                    <div class="search-box">
+                        <input type="text" id="searchInput" placeholder="搜尋EDM..." class="search-input">
+                        <button class="search-btn" id="searchBtn">🔍</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- EDM列表 -->
+            <div class="templates-container">
+                <table class="data-table">
+                    <thead>
+                        <tr>
+                            <th>EDM標題</th>
+                            <th>分類</th>
+                            <th>狀態</th>
+                            <th>上傳時間</th>
+                            <th>預覽</th>
+                            <th>修改</th>
+                            <th>刪除</th>
+                        </tr>
+                    </thead>
+                    <tbody id="templatesList">
+                        <!-- EDM列表將由 JavaScript 動態生成 -->
+                    </tbody>
+                </table>
+                
+                <!-- 分頁控制 -->
+                <div class="pagination">
+                    <div class="pagination-info">
+                        顯示 1-12 項，共 0 項
+                    </div>
+                    <div class="pagination-controls">
+                        <button id="prevPage" class="pagination-btn" disabled>上一頁</button>
+                        <div class="page-numbers">
+                            <!-- 頁碼將由 JavaScript 動態生成 -->
+                        </div>
+                        <button id="nextPage" class="pagination-btn">下一頁</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 批量操作 -->
+            <div class="bulk-actions" style="display: none;">
+                <div class="bulk-info">
+                    <span class="selected-count">已選擇 0 項</span>
+                </div>
+                <div class="bulk-buttons">
+                    <button class="btn btn-secondary" id="bulkPublishBtn">發布</button>
+                    <button class="btn btn-secondary" id="bulkDuplicateBtn">複製</button>
+                    <button class="btn btn-danger" id="bulkDeleteBtn">刪除</button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- 匯入EDM模態框 -->
+    <div id="importTemplateModal" class="modal">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>匯入EDM</h3>
+                    <button class="modal-close">✕</button>
+                </div>
+                <div class="modal-body">
+                    <form id="importTemplateForm">
+                        <div class="form-group">
+                            <label for="importFile">選擇EDM檔案 (.json, .html, .htm, .zip)</label>
+                            <input type="file" id="importFile" class="form-input" accept=".json,.html,.htm,.zip" required>
+                            <small class="form-text text-muted">請選擇有效的EDM檔案 (支援 json, html, htm, zip)</small>
+                        </div>
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary modal-cancel">取消</button>
+                            <button type="submit" class="btn btn-primary">匯入</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 建立/編輯EDM模態框 -->
+    <div id="createTemplateModal" class="modal modal-xl">
+        <div class="modal-dialog" style="max-width: 95%; width: 1400px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="modalTitle">建立新EDM</h3>
+                    <button class="modal-close">✕</button>
+                </div>
+                
+                <form id="createTemplateForm" class="modal-body">
+                    <input type="hidden" id="templateId">
+                    <div class="form-group">
+                        <label for="templateName">標題</label>
+                        <input type="text" id="templateName" name="name" required class="form-input">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="templateSubject">主旨</label>
+                        <input type="text" id="templateSubject" name="subject" required class="form-input" placeholder="電子報主旨">
+                    </div>
+                    
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="templateCategory">分類</label>
+                            <select id="templateCategory" name="categoryId" class="form-select">
+                                <option value="">未分類</option>
+                            </select>
+                        </div>
+                        <div class="form-group" style="display: flex; align-items: flex-end; padding-bottom: 10px;">
+                             <label class="checkbox-label" style="cursor: pointer;">
+                                <input type="checkbox" id="templateIsPublic" name="isPublic">
+                                <span style="margin-left: 8px;">設為公共EDM (所有人可見)</span>
+                            </label>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="section1Count">第一區塊內的文章數</label>
+                            <select id="section1Count" class="form-select">
+                                <option value="0">0</option>
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="section2Count">第二區塊內的文章數</label>
+                            <select id="section2Count" class="form-select">
+                                <option value="0" selected>0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label for="section3Count">第三區塊內的文章數</label>
+                            <select id="section3Count" class="form-select">
+                                <option value="0" selected>0</option>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="template-upload-section">
+                        <div class="upload-controls">
+                            <div class="form-group">
+                                <label>頂部 Banner (Header)</label>
+                                <input type="file" id="headerUpload" accept="image/*,.html,.htm" class="file-input">
+                                <div class="url-input-group" style="display: flex; gap: 5px; margin-top: 5px;">
+                                    <input type="text" id="headerUrl" class="form-input" placeholder="或輸入網址 (例如 https://...)" style="flex: 1;">
+                                    <button type="button" class="btn btn-sm btn-info" onclick="templatesManager.loadUrl('header')">載入</button>
+                                </div>
+                            </div>
+
+                            <!-- 動態生成的區塊輸入 -->
+                            <div id="dynamicSectionsInputs"></div>
+
+                            <div class="form-group">
+                                <label>底部 Banner (Footer)</label>
+                                <input type="file" id="footerUpload" accept="image/*,.html,.htm" class="file-input">
+                                <div class="url-input-group" style="display: flex; gap: 5px; margin-top: 5px;">
+                                    <input type="text" id="footerUrl" class="form-input" placeholder="或輸入網址 (例如 https://...)" style="flex: 1;">
+                                    <button type="button" class="btn btn-sm btn-info" onclick="templatesManager.loadUrl('footer')">載入</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="template-preview-area" style="border: 1px solid #ccc; padding: 0; margin-top: 10px; text-align: center;">
+                            <div id="previewHeader" style="margin-bottom: 0; line-height: 0;">
+                                <img src="" alt="Header Preview" style="max-width: 100%; display: none;">
+                                <iframe class="html-preview" style="display: none; width: 100%; border: none; overflow: hidden;" scrolling="no"></iframe>
+                                <div class="placeholder" style="padding: 20px; background: #eee; line-height: normal;">頂部 Banner 預覽</div>
+                            </div>
+                            
+                            <!-- 動態生成的區塊預覽 -->
+                            <div id="dynamicSectionsPreviews"></div>
+
+                            <div id="previewFooter" style="margin-top: 0; line-height: 0;">
+                                <img src="" alt="Footer Preview" style="max-width: 100%; display: none;">
+                                <iframe class="html-preview" style="display: none; width: 100%; border: none; overflow: hidden;" scrolling="no"></iframe>
+                                <div class="placeholder" style="padding: 20px; background: #eee; line-height: normal;">底部 Banner 預覽</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: 15px;">
+                        <label for="templateDescription">說明</label>
+                        <textarea id="templateDescription" name="description" rows="3" class="form-input"></textarea>
+                    </div>
+                </form>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-cancel">回上一頁</button>
+                    <button type="button" class="btn btn-info" id="saveAsTemplateBtn" style="margin-right: 5px;">另存新EDM</button>
+                    <button type="submit" form="createTemplateForm" class="btn btn-primary">送出資料</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 分類管理模態框 -->
+    <div id="categoryManagerModal" class="modal-overlay" style="display: none;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>分類管理</h3>
+                <button class="modal-close">✕</button>
+            </div>
+            <div class="modal-body">
+                <div class="add-category-row" style="display: flex; gap: 10px; margin-bottom: 20px;">
+                    <input type="text" id="newCategoryName" placeholder="輸入新分類名稱" class="form-input" style="flex: 1;">
+                    <button id="addCategoryBtn" class="btn btn-primary">新增</button>
+                </div>
+                <div class="category-list" id="categoryList" style="max-height: 300px; overflow-y: auto; border: 1px solid #eee; border-radius: 4px;">
+                    <!-- 分類列表將由 JS 生成 -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDM詳情模態框 -->
+    <div id="templateDetailModal" class="modal modal-xl">
+        <div class="modal-dialog" style="max-width: 90%; width: 1200px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3 id="detailTemplateName">EDM詳情</h3>
+                    <button class="modal-close">✕</button>
+                </div>
+                
+                <div class="modal-body">
+                    <div class="template-detail-tabs">
+                        <button class="tab-btn active" data-tab="overview">概覽</button>
+                        <button class="tab-btn" data-tab="content">內容</button>
+                        <button class="tab-btn" data-tab="preview">預覽</button>
+                        <button class="tab-btn" data-tab="usage">使用記錄</button>
+                    </div>
+                    
+                    <div class="tab-content">
+                        <div id="overview" class="tab-pane active">
+                            <div class="template-info">
+                                <div class="info-row">
+                                    <label>名稱：</label>
+                                    <span id="detailName">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <label>分類：</label>
+                                    <span id="detailCategory">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <label>狀態：</label>
+                                    <span id="detailStatus" class="status-badge">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <label>建立時間：</label>
+                                    <span id="detailCreated">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <label>最後修改：</label>
+                                    <span id="detailModified">-</span>
+                                </div>
+                                <div class="info-row">
+                                    <label>使用次數：</label>
+                                    <span id="detailUsageCount">-</span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="content" class="tab-pane">
+                            <div class="template-content">
+                                <div class="content-section">
+                                    <label>主旨：</label>
+                                    <div id="detailSubject" class="content-value">-</div>
+                                </div>
+                                <div class="content-section">
+                                    <label>HTML 內容：</label>
+                                    <div id="detailHtmlContent" class="content-code">-</div>
+                                </div>
+                                <div class="content-section">
+                                    <label>純文字內容：</label>
+                                    <div id="detailTextContent" class="content-text">-</div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="preview" class="tab-pane">
+                            <div class="template-preview">
+                                <div class="preview-frame">
+                                    <iframe id="previewIframe" src="about:blank"></iframe>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div id="usage" class="tab-pane">
+                            <div class="usage-stats">
+                                <div class="usage-chart">
+                                    <canvas id="usageChart" width="400" height="200"></canvas>
+                                </div>
+                                <div class="usage-list">
+                                    <h4>最近使用記錄</h4>
+                                    <div id="usageHistory">
+                                        <!-- 使用記錄將由 JavaScript 動態生成 -->
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary modal-close">關閉</button>
+                    <button type="button" class="btn btn-primary" id="editTemplateBtn">編輯EDM</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EDM編輯器模態框 -->
+    <div id="templateEditorModal" class="modal modal-fullscreen">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3>EDM編輯器</h3>
+                    <div class="editor-actions">
+                        <button class="btn btn-secondary" id="saveTemplateBtn">儲存</button>
+                        <button class="btn btn-primary" id="publishTemplateBtn">發布</button>
+                        <button class="modal-close">✕</button>
+                    </div>
+                </div>
+                
+                <div class="modal-body">
+                <div class="editor-container">
+                    <div class="editor-sidebar">
+                        <div class="editor-tabs">
+                            <button class="editor-tab active" data-tab="design">設計</button>
+                            <button class="editor-tab" data-tab="html">HTML</button>
+                            <button class="editor-tab" data-tab="settings">設定</button>
+                        </div>
+                        
+                        <div class="editor-content">
+                            <div id="design" class="editor-pane active">
+                                <div class="design-tools">
+                                    <h4>元件</h4>
+                                    <div class="component-list">
+                                        <div class="component-item" data-component="text">📝 文字</div>
+                                        <div class="component-item" data-component="image">🖼 圖片</div>
+                                        <div class="component-item" data-component="button">🔘 按鈕</div>
+                                        <div class="component-item" data-component="divider">➖ 分隔線</div>
+                                        <div class="component-item" data-component="social">📱 社群媒體</div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div id="html" class="editor-pane">
+                                <textarea id="htmlEditor" placeholder="HTML 內容..."></textarea>
+                            </div>
+                            
+                            <div id="settings" class="editor-pane">
+                                <div class="settings-form">
+                                    <div class="form-group">
+                                        <label>EDM名稱</label>
+                                        <input type="text" id="editorTemplateName">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>主旨</label>
+                                        <input type="text" id="editorTemplateSubject">
+                                    </div>
+                                    <div class="form-group">
+                                        <label>分類</label>
+                                        <select id="editorTemplateCategory">
+                                            <option value="">未分類</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="editor-main">
+                        <div class="editor-toolbar">
+                            <div class="toolbar-group">
+                                <button class="toolbar-btn" id="undoBtn" title="復原">↶</button>
+                                <button class="toolbar-btn" id="redoBtn" title="重做">↷</button>
+                            </div>
+                            <div class="toolbar-group">
+                                <button class="toolbar-btn" id="previewBtn" title="預覽">👁</button>
+                                <button class="toolbar-btn" id="testSendBtn" title="測試發送">📧</button>
+                            </div>
+                        </div>
+                        
+                        <div class="editor-canvas">
+                            <div id="templateCanvas" class="template-canvas">
+                                <!-- EDM內容將在這裡編輯 -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="js/utils.js?v=5"></script>
+    <script src="js/state-manager.js?v=5"></script>
+    <script src="js/admin-auth.js?v=5"></script>
+    <script src="js/user-auth.js?v=5"></script>
+    <script src="js/auth-guard.js?v=6"></script>
+    <script src="js/api.js?v=5"></script>
+    <script src="js/components.js?v=5"></script>
+    <script src="js/main.js?v=5"></script>
+    <script src="js/templates.js?v=5"></script>
+</body>
+</html>

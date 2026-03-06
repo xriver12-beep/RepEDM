@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>活動 API 測試 - WintonEDM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+        }
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .test-section {
+            margin: 20px 0;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+        }
+        .test-section h3 {
+            margin-top: 0;
+            color: #333;
+        }
+        .result {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+            font-family: monospace;
+            white-space: pre-wrap;
+        }
+        .success {
+            background: #d4edda;
+            color: #155724;
+        }
+        .error {
+            background: #f8d7da;
+            color: #721c24;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .log-output {
+            max-height: 300px;
+            overflow-y: auto;
+            background: #2d3748;
+            color: #e2e8f0;
+            padding: 10px;
+            border-radius: 4px;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>活動 API 測試頁面</h1>
+        
+        <div class="test-section">
+            <h3>1. API 連接測試</h3>
+            <button onclick="testAPIConnection()">測試 API 連接</button>
+            <div id="apiResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>2. 活動數據載入測試</h3>
+            <button onclick="testCampaignLoad()">載入活動數據</button>
+            <div id="campaignResult" class="result"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>3. 控制台日誌</h3>
+            <button onclick="clearLogs()">清除日誌</button>
+            <div id="logOutput" class="log-output"></div>
+        </div>
+        
+        <div class="test-section">
+            <h3>4. 活動列表顯示</h3>
+            <div id="campaignList"></div>
+        </div>
+    </div>
+
+    <script src="js/utils.js"></script>
+    <script src="js/notification.js"></script>
+    <script src="js/state-manager.js"></script>
+    <script src="js/components.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dev-config.js"></script>
+    
+    <script>
+        // 重寫 console.log 來捕獲日誌
+        const originalLog = console.log;
+        const originalWarn = console.warn;
+        const originalError = console.error;
+        
+        const logOutput = document.getElementById('logOutput');
+        
+        function addToLog(type, ...args) {
+            const timestamp = new Date().toLocaleTimeString();
+            const message = args.map(arg => 
+                typeof arg === 'object' ? JSON.stringify(arg, null, 2) : String(arg)
+            ).join(' ');
+            
+            const logEntry = `[${timestamp}] ${type.toUpperCase()}: ${message}\n`;
+            logOutput.textContent += logEntry;
+            logOutput.scrollTop = logOutput.scrollHeight;
+        }
+        
+        console.log = function(...args) {
+            originalLog.apply(console, args);
+            addToLog('log', ...args);
+        };
+        
+        console.warn = function(...args) {
+            originalWarn.apply(console, args);
+            addToLog('warn', ...args);
+        };
+        
+        console.error = function(...args) {
+            originalError.apply(console, args);
+            addToLog('error', ...args);
+        };
+        
+        function clearLogs() {
+            logOutput.textContent = '';
+        }
+        
+        async function testAPIConnection() {
+            const resultDiv = document.getElementById('apiResult');
+            resultDiv.textContent = '測試中...';
+            
+            try {
+                console.log('開始測試 API 連接...');
+                
+                // 測試基本 API 端點
+                const response = await fetch('http://localhost:3001/api/campaigns');
+                const data = await response.json();
+                
+                console.log('API 響應:', data);
+                
+                if (data.success) {
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ API 連接成功\n活動總數: ${data.data?.pagination?.total || 0}`;
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ API 響應失敗: ${data.message}`;
+                }
+            } catch (error) {
+                console.error('API 連接錯誤:', error);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ API 連接失敗: ${error.message}`;
+            }
+        }
+        
+        async function testCampaignLoad() {
+            const resultDiv = document.getElementById('campaignResult');
+            const listDiv = document.getElementById('campaignList');
+            
+            resultDiv.textContent = '載入中...';
+            listDiv.innerHTML = '';
+            
+            try {
+                console.log('開始載入活動數據...');
+                
+                // 使用前端的 campaignService
+                const response = await campaignService.getCampaigns();
+                console.log('CampaignService 響應:', response);
+                
+                if (response.success && response.data) {
+                    let campaigns = [];
+                    
+                    if (response.data.campaigns) {
+                        campaigns = response.data.campaigns;
+                    } else if (Array.isArray(response.data)) {
+                        campaigns = response.data;
+                    }
+                    
+                    console.log('解析的活動數據:', campaigns);
+                    
+                    resultDiv.className = 'result success';
+                    resultDiv.textContent = `✅ 活動載入成功\n活動數量: ${campaigns.length}`;
+                    
+                    // 顯示活動列表
+                    if (campaigns.length > 0) {
+                        listDiv.innerHTML = '<h4>活動列表:</h4>';
+                        campaigns.forEach((campaign, index) => {
+                            const campaignDiv = document.createElement('div');
+                            campaignDiv.style.cssText = 'margin: 10px 0; padding: 10px; border: 1px solid #ddd; border-radius: 4px;';
+                            campaignDiv.innerHTML = `
+                                <strong>${index + 1}. ${campaign.name || '未命名活動'}</strong><br>
+                                狀態: ${campaign.status || '未知'}<br>
+                                類型: ${campaign.type || '未知'}<br>
+                                創建時間: ${campaign.created_at ? new Date(campaign.created_at).toLocaleString() : '未知'}
+                            `;
+                            listDiv.appendChild(campaignDiv);
+                        });
+                    } else {
+                        listDiv.innerHTML = '<p>沒有找到活動數據</p>';
+                    }
+                } else {
+                    resultDiv.className = 'result error';
+                    resultDiv.textContent = `❌ 活動載入失敗: ${response.message || '未知錯誤'}`;
+                }
+            } catch (error) {
+                console.error('活動載入錯誤:', error);
+                resultDiv.className = 'result error';
+                resultDiv.textContent = `❌ 活動載入失敗: ${error.message}`;
+            }
+        }
+        
+        // 頁面載入時自動執行測試
+        window.addEventListener('DOMContentLoaded', () => {
+            console.log('測試頁面已載入');
+            console.log('API 端點配置:', API_ENDPOINTS?.campaigns);
+            console.log('CampaignService 可用:', typeof campaignService !== 'undefined');
+        });
+    </script>
+</body>
+</html>

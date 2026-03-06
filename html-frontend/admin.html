@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>管理員頁面 - WintonEDM</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f5f5f5;
+        }
+        .redirect-container {
+            max-width: 500px;
+            margin: 0 auto;
+            background: white;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        h1 { 
+            color: #3498db; 
+            margin-bottom: 20px; 
+        }
+        p { 
+            color: #666; 
+            margin-bottom: 30px; 
+        }
+        .loading {
+            color: #3498db;
+            font-size: 14px;
+        }
+    </style>
+    <script>
+        // 自動重定向到設定頁面
+        setTimeout(function() {
+            window.location.href = '/settings.html';
+        }, 2000);
+    </script>
+</head>
+<body>
+    <div class="redirect-container">
+        <h1>管理員頁面</h1>
+        <p>正在重定向到管理員設定頁面...</p>
+        <p class="loading">如果頁面沒有自動跳轉，請<a href="/settings.html">點擊這裡</a></p>
+    </div>
+</body>
+</html>
