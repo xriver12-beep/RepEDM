@@ -1,6 +1,6 @@
 RepEDM System Documentation (README)
 Project Overview
-RepEDM (WintonEDM) is an enterprise-grade Electronic Direct Mail (EDM) management system. It provides a one-stop solution ranging from subscriber management and content creation to approval workflows and delivery tracking. The system emphasizes high deliverability, rigorous auditing mechanisms, and an intuitive user interface.
+RepEDM is an enterprise-grade Electronic Direct Mail (EDM) management system. It provides a one-stop solution ranging from subscriber management and content creation to approval workflows and delivery tracking. The system emphasizes high deliverability, rigorous auditing mechanisms, and an intuitive user interface.
 
 Key Features
 1. Email Dispatch & Tracking
