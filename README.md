@@ -60,7 +60,7 @@ Clone the Repository:
 
 Bash
 git clone <repository_url>
-cd WintonEDM
+cd RepEDM
 Install Backend Dependencies:
 
 Bash
